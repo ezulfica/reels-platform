@@ -1,0 +1,21 @@
+{
+  "fixture_version": "1.0.0",
+  "title": "Évaluation Hermes low/medium sur huit reels réels",
+  "protocol": {
+    "source_fixture": "qwen_extraction_60_v1.json",
+    "split": "development uniquement; aucun holdout utilisé pour choisir une variante",
+    "database": "deux bases SQLite temporaires neuves contenant uniquement reel, reel_context, transcript et screen_text",
+    "backends": ["qwen3:8b", "hermes low", "hermes medium"],
+    "temperature": "non contrôlable via la CLI Hermes 0.20.0; ne pas comparer comme une température identique à Qwen"
+  },
+  "shortcodes": [
+    "DTIoW_SCOlX",
+    "DbhOV8nMEmd",
+    "DbPYIVXAnQ3",
+    "DboSHvOsshy",
+    "DaTM9o1AZ5I",
+    "Db7-r7vz7Ay",
+    "DatB1zeIiD6",
+    "DbpicQrq-7I"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "shortcodes": ["DIHthybz4Vx", "DbmBd-jsitw", "DZkXscZRD4j"],
+  "cases": [
+    {
+      "shortcode": "DIHthybz4Vx",
+      "expected_names": ["Adashino Nenbutsuji Temple"],
+      "expected_entities": [
+        {"name": "Adashino Nenbutsuji Temple", "type": "place"}
+      ]
+    },
+    {
+      "shortcode": "DbmBd-jsitw",
+      "expected_names": ["Hasedera", "Hokokuji", "Ginza Kagari"],
+      "expected_entities": [
+        {"name": "Hasedera", "type": "place"},
+        {"name": "Hokokuji", "type": "place"},
+        {"name": "Ginza Kagari", "type": "restaurant"}
+      ]
+    },
+    {
+      "shortcode": "DZkXscZRD4j",
+      "expected_names": ["HAY HAY"],
+      "expected_entities": [
+        {"name": "HAY HAY", "type": "restaurant"}
+      ]
+    }
+  ]
+}

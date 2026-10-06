@@ -1,0 +1,118 @@
+{
+  "fixture_version": "1.0.0",
+  "curation": "Attentes ancrées dans caption, transcript et OCR. Les lignes candidate source=human sont exclues du score.",
+  "cases": [
+    {
+      "shortcode": "DIHthybz4Vx",
+      "category": "lieux_restaurants",
+      "source_fixture": "qwen_recall_regression.json",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_names": ["Adashino Nenbutsuji Temple"],
+      "expected_entities": [
+        {"name": "Adashino Nenbutsuji Temple", "type": "place"}
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": ["omettre Adashino Nenbutsuji Temple", "classer le guide comme repertoire"]
+    },
+    {
+      "shortcode": "DbmBd-jsitw",
+      "category": "lieux_restaurants",
+      "source_fixture": "qwen_recall_regression.json",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_names": ["Hasedera", "Hokokuji", "Ginza Kagari"],
+      "expected_entities": [
+        {"name": "Hasedera", "type": "place"},
+        {"name": "Hokokuji", "type": "place"},
+        {"name": "Ginza Kagari", "type": "restaurant"}
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": ["omettre Hokokuji", "omettre Ginza Kagari", "classer ce guide comme repertoire"]
+    },
+    {
+      "shortcode": "DZkXscZRD4j",
+      "category": "lieux_restaurants",
+      "source_fixture": "qwen_recall_regression.json",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_names": ["HAY HAY"],
+      "expected_entities": [
+        {"name": "HAY HAY", "type": "shop", "aliases": ["HAY HAY home shopping"]}
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": ["omettre HAY HAY", "compter des corrections humaines comme rappel Qwen"]
+    },
+    {
+      "shortcode": "DQTzQYfjEKM",
+      "category": "recettes",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "recipe",
+      "expected_actionable": true,
+      "entity_scope": "complete",
+      "expected_entities": [],
+      "expected_recipes": [
+        {"name": "Udon crémeux au bœuf et à la sauce curry", "aliases": ["Udon crémeux au bœuf sauce curry"]}
+      ],
+      "unacceptable_errors": ["omettre le plat de l’index recette", "créer des produits catalogue à partir des seuls emballages OCR"]
+    },
+    {
+      "shortcode": "DKR2DrSyGL5",
+      "category": "produits_a_envisager",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "complete",
+      "expected_entities": [
+        {"name": "MUJI Steel Nail Clipper", "type": "product"},
+        {"name": "KAI Seki Magoroku", "aliases": ["Kai Seki Magoroku", "KAI “Seki Magoroku”"], "types": ["product", "brand"]},
+        {"name": "SUWADA Classic", "aliases": ["SUWADA", "Classic"], "types": ["product", "brand"]}
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": ["omettre un des trois produits explicitement recommandés", "inventer un quatrième produit"]
+    },
+    {
+      "shortcode": "Db3Eah_xPOL",
+      "category": "exercices_sport",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "method",
+      "expected_actionable": true,
+      "entity_scope": "complete",
+      "expected_entities": [
+        {"name": "archerystrong.com", "type": "service", "aliases": ["archerystrong.com/"]}
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": ["classer la méthode d’entraînement comme recommandation de produit", "inventer un équipement ou une entité catalogue"]
+    },
+    {
+      "shortcode": "DErz4FZT5dX",
+      "category": "lecons_vocabulaire",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "lesson",
+      "expected_actionable": true,
+      "entity_scope": "complete",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "expected_terms": ["いつも", "たいてい", "よく", "ときどき", "たまに", "めったに", "ほとんど", "ぜんぜん"],
+      "unacceptable_errors": ["confondre des mots de vocabulaire avec des entités catalogue"]
+    },
+    {
+      "shortcode": "Da72zkyIJCI",
+      "category": "non_actionnable",
+      "expected_mode": null,
+      "mode_note": "Aucun mode ne décrit correctement un extrait de fiction sans conseil réutilisable ni recommandation à visiter/acheter.",
+      "expected_content_kind": "",
+      "expected_actionable": false,
+      "entity_scope": "complete",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": ["marquer actionable=true", "créer une entité catalogue pour le titre de l’anime", "inventer un content_kind de leçon ou guide"]
+    }
+  ]
+}

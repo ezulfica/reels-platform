@@ -1,0 +1,1401 @@
+{
+  "fixture_version": "1.0.0",
+  "title": "Évaluation réelle Qwen sur 60 reels source-only, nouveau jeu",
+  "curation": "Annotations ancrées dans caption, transcription et OCR; aucune sortie des tables extraction/candidate de la base utilisateur n’a servi de référence. Le jeu est disjoint des régressions scorées, de l’acceptation précédente et des shortcodes exposés par le sondage interrompu.",
+  "protocol": {
+    "model": "qwen3:8b",
+    "mode": "extraction staged complète (fiche, discovery, enrichment; index recette si applicable)",
+    "database": "nouvelle base temporaire vide; seules les sources reel/reel_context/transcript/screen_text sont copiées depuis SQLite en lecture seule; aucune extraction, candidate, correction ou feedback n’est importé",
+    "split": "40 développement / 20 contrôle gelé, répartis par catégorie; seuls les reels ayant déjà transcription et OCR dans la source sont admissibles; le contrôle ne sert à aucun choix ou réglage de prompt",
+    "holdout_policy": "40 développement / 20 contrôle intact. Cinq cas de développement déjà vus dans le sondage technique sont marqués tuning_eligible=false; choisir toute variante sur les 35 autres cas seulement. Le contrôle reste fermé jusqu’au gel."
+  },
+  "cases": [
+    {
+      "shortcode": "DTIoW_SCOlX",
+      "category": "recettes",
+      "split": "development",
+      "source_title": "Soupe Phô maison",
+      "rationale": "La caption donne la liste d’ingrédients et des corrections pour une soupe phô. Le plat est évalué dans l’index recette, jamais comme entité catalogue.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "recipe",
+      "expected_actionable": true,
+      "entity_scope": "complete",
+      "expected_entities": [],
+      "expected_recipes": [
+        {
+          "name": "Soupe Phô maison",
+          "aliases": [
+            "Soupe pho maison"
+          ]
+        }
+      ],
+      "unacceptable_errors": [
+        "ne pas créer de fiche catalogue pour la recette"
+      ]
+    },
+    {
+      "shortcode": "Dak4r1YuvOe",
+      "category": "recettes",
+      "split": "holdout",
+      "source_title": "Honey Garlic Pork Belly",
+      "rationale": "La caption donne ingrédients et étapes de cuisson pour un pork belly au miel et à l’ail. Le plat est évalué dans l’index recette, jamais comme entité catalogue.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "recipe",
+      "expected_actionable": true,
+      "entity_scope": "complete",
+      "expected_entities": [],
+      "expected_recipes": [
+        {
+          "name": "Honey Garlic Pork Belly"
+        }
+      ],
+      "unacceptable_errors": [
+        "ne pas créer de fiche catalogue pour la recette"
+      ]
+    },
+    {
+      "shortcode": "DPdeUxmD2th",
+      "category": "recettes",
+      "split": "development",
+      "source_title": "Riz aux champignons et au thon",
+      "rationale": "La caption bilingue donne les ingrédients et les étapes d’un riz japonais aux champignons et au thon. Le plat est évalué dans l’index recette, jamais comme entité catalogue.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "recipe",
+      "expected_actionable": true,
+      "entity_scope": "complete",
+      "expected_entities": [],
+      "expected_recipes": [
+        {
+          "name": "Riz aux champignons et au thon",
+          "aliases": [
+            "Mixed Rice with Plenty of Mushrooms and Tuna",
+            "たっぷりキノコとツナの炊き込みご飯"
+          ]
+        }
+      ],
+      "unacceptable_errors": [
+        "ne pas créer de fiche catalogue pour la recette"
+      ],
+      "tuning_eligible": false
+    },
+    {
+      "shortcode": "DbhOV8nMEmd",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "Itoshima et Shiraito Falls",
+      "rationale": "La caption présente explicitement Itoshima et des lieux visités autour de Fukuoka.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Itoshima",
+          "type": "place"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Itoshima et Shiraito Falls"
+      ]
+    },
+    {
+      "shortcode": "DbPYIVXAnQ3",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "Wulai",
+      "rationale": "La caption recommande un resort à Wulai et donne l’itinéraire depuis Taipei.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Wulai",
+          "type": "place"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Wulai"
+      ]
+    },
+    {
+      "shortcode": "DbTN-cQNRa2",
+      "category": "lieux",
+      "split": "holdout",
+      "source_title": "Muku Paris",
+      "rationale": "La caption recommande directement le comptoir japonais Muku, situé à Paris 6.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Muku",
+          "type": "restaurant",
+          "aliases": [
+            "MUKU",
+            "muku.paris"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Muku Paris"
+      ]
+    },
+    {
+      "shortcode": "DbD5v8SNrZF",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "Amam Dacotan Paris",
+      "rationale": "La caption décrit et recommande la boulangerie Amam Dacotan à Paris.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Amam Dacotan",
+          "type": "restaurant",
+          "aliases": [
+            "amam_dacotan_paris"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Amam Dacotan Paris"
+      ]
+    },
+    {
+      "shortcode": "Da0PnbIzoLp",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "YùYù perfume shop",
+      "rationale": "La caption recommande une boutique de parfum à Taipei et donne son nom et son adresse.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "YùYù",
+          "type": "shop",
+          "aliases": [
+            "郁郁"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer YùYù perfume shop"
+      ]
+    },
+    {
+      "shortcode": "DazEj5DzuCh",
+      "category": "lieux",
+      "split": "holdout",
+      "source_title": "Ruam Sab Market",
+      "rationale": "La caption recommande le marché Ruam Sab à Bangkok et décrit ses stands de nourriture.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Ruam Sab Market",
+          "type": "shop"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Ruam Sab Market"
+      ]
+    },
+    {
+      "shortcode": "DaTxD4JNIwj",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "Puma Flagship London",
+      "rationale": "La caption invite les fans de Ferrari à visiter la boutique Puma d’Oxford Street.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Puma Flagship Store",
+          "type": "shop",
+          "aliases": [
+            "Puma Flagship London"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Puma Flagship London"
+      ]
+    },
+    {
+      "shortcode": "Dak_7krN-mv",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "Niwa",
+      "rationale": "La caption présente la boulangerie Niwa, donne son adresse et ses horaires.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Niwa",
+          "type": "restaurant",
+          "aliases": [
+            "niwa_paris_"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Niwa"
+      ]
+    },
+    {
+      "shortcode": "DWDv4WHD4GT",
+      "category": "lieux",
+      "split": "holdout",
+      "source_title": "Mui Ne",
+      "rationale": "La caption recommande explicitement la destination balnéaire de Mui Ne au Vietnam.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Mui Ne",
+          "type": "place",
+          "aliases": [
+            "Mũi Né"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Mui Ne"
+      ]
+    },
+    {
+      "shortcode": "DXcFOYgiDWW",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "L’eau et les rêves",
+      "rationale": "La caption recommande un café-librairie parisien installé sur une péniche.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "L’eau et les rêves",
+          "type": "restaurant",
+          "aliases": [
+            "L'eau et les rêves",
+            "Peniche Librairie"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer L’eau et les rêves"
+      ]
+    },
+    {
+      "shortcode": "DOmZcYiE6S7",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "Atago Shrine et les Stairs of Success",
+      "rationale": "La caption décrit le sanctuaire Atago et son escalier célèbre comme une destination à visiter à Tokyo.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Atago Shrine",
+          "type": "place"
+        },
+        {
+          "name": "Stairs of Success",
+          "type": "place"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Atago Shrine et les Stairs of Success"
+      ]
+    },
+    {
+      "shortcode": "DOf-u8zEok7",
+      "category": "lieux",
+      "split": "holdout",
+      "source_title": "Jindaiji",
+      "rationale": "La caption recommande Jindaiji comme lieu caché à Tokyo et donne l’itinéraire en train et bus.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Jindaiji",
+          "type": "place",
+          "aliases": [
+            "深大寺"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Jindaiji"
+      ]
+    },
+    {
+      "shortcode": "Db_Y5A2KZcY",
+      "category": "lieux",
+      "split": "development",
+      "source_title": "26 destinations françaises",
+      "rationale": "La caption énumère ces 24 lieux précis comme destinations françaises à découvrir.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Cascade du Saut Girard",
+          "type": "place"
+        },
+        {
+          "name": "Gorges du Tarn",
+          "type": "place"
+        },
+        {
+          "name": "Cascade de l’Éventail",
+          "type": "place",
+          "aliases": [
+            "Cascade de l’Eventail"
+          ]
+        },
+        {
+          "name": "Moissac Abbey",
+          "type": "place"
+        },
+        {
+          "name": "Beaulieu-sur-Dordogne",
+          "type": "place"
+        },
+        {
+          "name": "Church of Treguier",
+          "type": "place"
+        },
+        {
+          "name": "Gaillac",
+          "type": "place"
+        },
+        {
+          "name": "Chateau de Campagne",
+          "type": "place",
+          "aliases": [
+            "Château de Campagne"
+          ]
+        },
+        {
+          "name": "Anse Noire",
+          "type": "place"
+        },
+        {
+          "name": "Malestroit",
+          "type": "place"
+        },
+        {
+          "name": "Angles-sur-l’Anglin",
+          "type": "place"
+        },
+        {
+          "name": "Penne",
+          "type": "place"
+        },
+        {
+          "name": "Belcastel",
+          "type": "place"
+        },
+        {
+          "name": "Pont-Audemer",
+          "type": "place"
+        },
+        {
+          "name": "Menthon Saint Bernard",
+          "type": "place"
+        },
+        {
+          "name": "Gouffre de Proumeyssac",
+          "type": "place"
+        },
+        {
+          "name": "Ardeche Gorges",
+          "type": "place",
+          "aliases": [
+            "Gorges de l’Ardèche"
+          ]
+        },
+        {
+          "name": "Crestet",
+          "type": "place"
+        },
+        {
+          "name": "Huel Goat forest",
+          "type": "place"
+        },
+        {
+          "name": "Domaine Saint-Aubin",
+          "type": "place"
+        },
+        {
+          "name": "Anse Dufour",
+          "type": "place"
+        },
+        {
+          "name": "Gorges de la Jonte",
+          "type": "place"
+        },
+        {
+          "name": "Beaufort",
+          "type": "place"
+        },
+        {
+          "name": "Anse Couleuvre",
+          "type": "place"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer 26 destinations françaises"
+      ]
+    },
+    {
+      "shortcode": "DboSHvOsshy",
+      "category": "produits",
+      "split": "development",
+      "source_title": "SmallRig suction cup mount",
+      "rationale": "La caption recommande explicitement un accessoire de tournage SmallRig.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "SmallRig suction cup mount",
+          "type": "product"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer SmallRig suction cup mount"
+      ]
+    },
+    {
+      "shortcode": "DbbM9JBsbhW",
+      "category": "produits",
+      "split": "holdout",
+      "source_title": "OmniRoute",
+      "rationale": "La caption présente OmniRoute comme un outil logiciel à essayer et décrit ses fonctions.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "OmniRoute",
+          "type": "service"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer OmniRoute"
+      ]
+    },
+    {
+      "shortcode": "DaTM9o1AZ5I",
+      "category": "produits",
+      "split": "development",
+      "source_title": "Console AM.PM",
+      "rationale": "La caption indique un achat AM.PM et le recommande comme bon investissement.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "AM.PM",
+          "type": "brand",
+          "aliases": [
+            "am.pm"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Console AM.PM"
+      ]
+    },
+    {
+      "shortcode": "DbKsktqITFi",
+      "category": "produits",
+      "split": "development",
+      "source_title": "Next Level Racing",
+      "rationale": "La caption attribue explicitement l’expérience de simulation à Next Level Racing et PSVR2.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Next Level Racing",
+          "type": "brand"
+        },
+        {
+          "name": "PSVR2",
+          "type": "product",
+          "aliases": [
+            "PlayStation VR2"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Next Level Racing"
+      ]
+    },
+    {
+      "shortcode": "DbLPpYlm3Ol",
+      "category": "produits",
+      "split": "holdout",
+      "source_title": "Ulanzi CW15",
+      "rationale": "La caption nomme et vante le chargeur Ulanzi CW15.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Ulanzi CW15",
+          "type": "product"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Ulanzi CW15"
+      ]
+    },
+    {
+      "shortcode": "DHdsfcExhW3",
+      "category": "produits",
+      "split": "development",
+      "source_title": "Outils de nettoyage recommandés",
+      "rationale": "La caption et l’OCR listent quatre outils de nettoyage présentés comme utilisés et recommandés.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Kärcher Steam Cleaner",
+          "type": "product"
+        },
+        {
+          "name": "Floor Scrub Brush with Squeegee",
+          "type": "product"
+        },
+        {
+          "name": "Mop and Bucket Set",
+          "type": "product"
+        },
+        {
+          "name": "Extendable Dust Brush",
+          "type": "product"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Outils de nettoyage recommandés"
+      ],
+      "tuning_eligible": false
+    },
+    {
+      "shortcode": "DYrTKv7g2os",
+      "category": "produits",
+      "split": "development",
+      "source_title": "Command picture hanging strips",
+      "rationale": "La caption recommande les languettes Command pour fixer des cadres sans percer.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Command",
+          "type": "brand"
+        },
+        {
+          "name": "Command picture hanging strips",
+          "type": "product",
+          "aliases": [
+            "Command strips",
+            "languettes accroche tableaux Command",
+            "languettes accroche-tableau de commande"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Command picture hanging strips"
+      ]
+    },
+    {
+      "shortcode": "DTf_9xujxp-",
+      "category": "produits",
+      "split": "holdout",
+      "source_title": "Amazon Dual Sided Iron Board",
+      "rationale": "La caption vante une planche à repasser double face rotative et donne un lien d’achat.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Amazon Dual Sided Iron Board",
+          "type": "product"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Amazon Dual Sided Iron Board"
+      ]
+    },
+    {
+      "shortcode": "DQqPX0oEUHk",
+      "category": "produits",
+      "split": "development",
+      "source_title": "Fable glassware",
+      "rationale": "La caption recommande les verres Fable et décrit leurs propriétés et leur empilement.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Fable glass",
+          "aliases": [
+            "Fable glasses",
+            "glass from Fable",
+            "Fable",
+            "Fable Home",
+            "glasses from Fable"
+          ],
+          "types": [
+            "product",
+            "brand"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Fable glassware"
+      ]
+    },
+    {
+      "shortcode": "DZzybofAOZn",
+      "category": "produits",
+      "split": "development",
+      "source_title": "WOODPACKER backpack",
+      "rationale": "La caption présente à la vente le sac à dos WOODPACKER et ses usages.",
+      "expected_mode": "recommandation",
+      "expected_content_kind": "",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "WOODPACKER backpack",
+          "type": "product",
+          "aliases": [
+            "WOODPACKER"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer WOODPACKER backpack"
+      ]
+    },
+    {
+      "shortcode": "Db7-r7vz7Ay",
+      "category": "exercices",
+      "split": "development",
+      "source_title": "Rotations douces du bas du dos",
+      "rationale": "La caption propose trois mouvements à essayer pour mobiliser le bas du dos.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DboiUcbomou",
+      "category": "exercices",
+      "split": "holdout",
+      "source_title": "Mobilité de hanche pour la sciatique",
+      "rationale": "La caption explique un exercice de rotation et de stabilité de la hanche.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DatB1zeIiD6",
+      "category": "exercices",
+      "split": "development",
+      "source_title": "Reverse plank",
+      "rationale": "La caption explique l’exécution et les effets d’un reverse plank.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DaXrEIttU1b",
+      "category": "exercices",
+      "split": "development",
+      "source_title": "Exercices pour trapèzes et cervicales",
+      "rationale": "La caption recommande trois exercices quotidiens avec un nombre de répétitions.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DaVibgWBDvW",
+      "category": "exercices",
+      "split": "holdout",
+      "source_title": "Saddle pose",
+      "rationale": "La caption décrit une posture et le lien entre hanches et tensions lombaires.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DaEGzNcNnoC",
+      "category": "exercices",
+      "split": "development",
+      "source_title": "Outer Hip Dropset",
+      "rationale": "La caption présente un exercice puis renvoie vers la plateforme LowBackAbility.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "LowBackAbility.com",
+          "type": "service",
+          "aliases": [
+            "LowBackAbility"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Outer Hip Dropset"
+      ]
+    },
+    {
+      "shortcode": "C8Dix6OPs9l",
+      "category": "exercices",
+      "split": "development",
+      "source_title": "Routine de mobilité full body",
+      "rationale": "La caption donne une routine de mobilité avec exercices, séries et répétitions.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": [],
+      "tuning_eligible": false
+    },
+    {
+      "shortcode": "DVqozsDiKrG",
+      "category": "exercices",
+      "split": "holdout",
+      "source_title": "Exercices de mobilité des épaules",
+      "rationale": "La caption liste cinq mouvements d’épaules pour un entraînement express.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DQ776DZjJPk",
+      "category": "exercices",
+      "split": "development",
+      "source_title": "Entraînement sans salle",
+      "rationale": "L’OCR donne plusieurs mouvements et groupes musculaires d’un entraînement sans salle.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": [],
+      "tuning_eligible": false
+    },
+    {
+      "shortcode": "DXHfWd6D57t",
+      "category": "exercices",
+      "split": "development",
+      "source_title": "Routine de mobilité inspirée d’Alcaraz",
+      "rationale": "La caption et la transcription détaillent les composantes d’une routine de mobilité sportive.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "exercise",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DboXxjbMzAp",
+      "category": "lecons_tutoriels",
+      "split": "development",
+      "source_title": "Nettoyage des murs",
+      "rationale": "La caption propose un conseil réutilisable pour le nettoyage des murs.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "method",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DblvW6UMJNq",
+      "category": "lecons_tutoriels",
+      "split": "holdout",
+      "source_title": "Méthode de conservation",
+      "rationale": "La caption présente une méthode traditionnelle de conservation réutilisable.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "method",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "Da2Sq6Yz9b1",
+      "category": "lecons_tutoriels",
+      "split": "development",
+      "source_title": "Réglages de retouche photo",
+      "rationale": "La caption donne des principes concrets sur lumière, ombres et équilibre.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "method",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "Da4q7qFqLFx",
+      "category": "lecons_tutoriels",
+      "split": "holdout",
+      "source_title": "Réglages d’export Lightroom",
+      "rationale": "La caption liste les réglages techniques exacts pour exporter des images.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "method",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Lightroom",
+          "type": "service",
+          "aliases": [
+            "Adobe Lightroom"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Réglages d’export Lightroom"
+      ]
+    },
+    {
+      "shortcode": "Da2g9a0OZAT",
+      "category": "lecons_tutoriels",
+      "split": "development",
+      "source_title": "Organisation de Claude Code",
+      "rationale": "La caption décrit une structure de fichiers et une méthode de travail reproductible pour Claude Code.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "method",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DVSnb9RCNe6",
+      "category": "lecons_tutoriels",
+      "split": "development",
+      "source_title": "Méthodes d’observation cinématographique",
+      "rationale": "La caption énumère des exercices d’observation et d’étude de la lumière et du cadrage.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "lesson",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DUryW45jiFd",
+      "category": "lecons_tutoriels",
+      "split": "holdout",
+      "source_title": "Ordre des blocs en japonais",
+      "rationale": "La caption enseigne une règle de syntaxe japonaise avec deux exemples traduits.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "lesson",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DVubUhbkpFt",
+      "category": "lecons_tutoriels",
+      "split": "development",
+      "source_title": "Phrase japonaise à l’izakaya",
+      "rationale": "La caption et la transcription donnent une phrase japonaise et sa traduction pour demander une place pour une personne.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "lesson",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "DbpicQrq-7I",
+      "category": "medias",
+      "split": "development",
+      "source_title": "Akashic Records of Bastard Magic Instructor",
+      "rationale": "La caption présente titre, genres et informations de diffusion de la série.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Akashic Records of Bastard Magic Instructor",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Akashic Records of Bastard Magic Instructor"
+      ]
+    },
+    {
+      "shortcode": "DbdJMusSbXs",
+      "category": "medias",
+      "split": "holdout",
+      "source_title": "I’m Quitting Heroing",
+      "rationale": "La caption recommande une série et en résume l’intrigue.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "I’m Quitting Heroing",
+          "type": "media",
+          "aliases": [
+            "Yuusha, Yamemasu"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer I’m Quitting Heroing"
+      ]
+    },
+    {
+      "shortcode": "DbTZk_KtVwV",
+      "category": "medias",
+      "split": "development",
+      "source_title": "A Friend of Dorothy",
+      "rationale": "La caption présente le court métrage et son synopsis.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "A Friend of Dorothy",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer A Friend of Dorothy"
+      ]
+    },
+    {
+      "shortcode": "DbBXpgJtZKy",
+      "category": "medias",
+      "split": "development",
+      "source_title": "Goten’s Great Adventure",
+      "rationale": "La caption annonce une série Dragon Ball et un nouvel épisode.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Goten’s Great Adventure",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Goten’s Great Adventure"
+      ]
+    },
+    {
+      "shortcode": "Da7JrPJNv0F",
+      "category": "medias",
+      "split": "holdout",
+      "source_title": "Batman: Year One",
+      "rationale": "La caption décrit et évalue le film Batman: Year One.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Batman: Year One",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Batman: Year One"
+      ]
+    },
+    {
+      "shortcode": "Daeu599vXs1",
+      "category": "medias",
+      "split": "development",
+      "source_title": "March Comes in Like a Lion",
+      "rationale": "La caption recommande la série et décrit ses thèmes.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "March Comes in Like a Lion",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer March Comes in Like a Lion"
+      ]
+    },
+    {
+      "shortcode": "DabfinTsZzC",
+      "category": "medias",
+      "split": "development",
+      "source_title": "Sparks of Tomorrow",
+      "rationale": "La caption présente le titre, le studio et le synopsis d’un anime.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Sparks of Tomorrow",
+          "type": "media",
+          "aliases": [
+            "20 Seiki Denki Mokuroku"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Sparks of Tomorrow"
+      ]
+    },
+    {
+      "shortcode": "DY_FNlTTekU",
+      "category": "medias",
+      "split": "holdout",
+      "source_title": "An Observation Log of My Fiancée Who Calls Herself a Villainess",
+      "rationale": "La caption donne le titre et résume une comédie romantique animée.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "An Observation Log of My Fiancée Who Calls Herself a Villainess",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer An Observation Log of My Fiancée Who Calls Herself a Villainess"
+      ]
+    },
+    {
+      "shortcode": "DYbWvzlM-WQ",
+      "category": "medias",
+      "split": "development",
+      "source_title": "Liste de séries et de livres",
+      "rationale": "La caption et la transcription présentent explicitement une liste de séries et de livres recommandés.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Frieren",
+          "type": "media"
+        },
+        {
+          "name": "Dungeon Meshi",
+          "type": "media"
+        },
+        {
+          "name": "Mushishi",
+          "type": "media"
+        },
+        {
+          "name": "The Spear Cuts Through Water",
+          "type": "media"
+        },
+        {
+          "name": "Jujutsu Kaisen",
+          "type": "media"
+        },
+        {
+          "name": "Soul Eater",
+          "type": "media"
+        },
+        {
+          "name": "Bungo Stray Dogs",
+          "type": "media"
+        },
+        {
+          "name": "The Atlas Six",
+          "type": "media"
+        },
+        {
+          "name": "The Familiar",
+          "type": "media"
+        },
+        {
+          "name": "The Apothecary Diaries",
+          "type": "media",
+          "aliases": [
+            "Apothecary Diaries"
+          ]
+        },
+        {
+          "name": "Fruits Basket",
+          "type": "media"
+        },
+        {
+          "name": "Ouran High School Host Club",
+          "type": "media",
+          "aliases": [
+            "Ouran High School"
+          ]
+        },
+        {
+          "name": "The Ghost Bride",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Liste de séries et de livres"
+      ]
+    },
+    {
+      "shortcode": "DXomIb_JoZd",
+      "category": "medias",
+      "split": "development",
+      "source_title": "Bungo Stray Dogs",
+      "rationale": "La caption donne les informations et le synopsis de l’anime Bungo Stray Dogs.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Bungo Stray Dogs",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Bungo Stray Dogs"
+      ]
+    },
+    {
+      "shortcode": "DVpnjxNidso",
+      "category": "medias",
+      "split": "holdout",
+      "source_title": "The Spectacular Spider-Man",
+      "rationale": "La caption présente le titre, les personnages et le synopsis de la série animée.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "The Spectacular Spider-Man",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer The Spectacular Spider-Man"
+      ]
+    },
+    {
+      "shortcode": "DWYxvI0ipsp",
+      "category": "medias",
+      "split": "development",
+      "source_title": "Limitless",
+      "rationale": "La caption décrit le film Limitless et son intrigue.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Limitless",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Limitless"
+      ]
+    },
+    {
+      "shortcode": "DUcbXfKiNP-",
+      "category": "medias",
+      "split": "holdout",
+      "source_title": "Gate: Jieitai Kanochi nite, Kaku Tatakaeri",
+      "rationale": "La caption donne le titre complet et le synopsis de l’anime Gate.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Gate: Jieitai Kanochi nite, Kaku Tatakaeri",
+          "type": "media",
+          "aliases": [
+            "Gate"
+          ]
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Gate: Jieitai Kanochi nite, Kaku Tatakaeri"
+      ]
+    },
+    {
+      "shortcode": "DTgBkE1gnZ8",
+      "category": "medias",
+      "split": "development",
+      "source_title": "Family By Choice",
+      "rationale": "La caption donne le titre, les personnages et le synopsis du drama Family By Choice.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "minimum",
+      "expected_entities": [
+        {
+          "name": "Family By Choice",
+          "type": "media"
+        }
+      ],
+      "expected_recipes": [],
+      "unacceptable_errors": [
+        "manquer Family By Choice"
+      ]
+    },
+    {
+      "shortcode": "DVqGpmcDLh0",
+      "category": "non_actionnable",
+      "split": "holdout",
+      "source_title": "Mème du lundi issu de Succession",
+      "rationale": "La caption et la transcription ne donnent qu’une blague sur le lundi; le hashtag Succession identifie le clip mais ne recommande pas la série.",
+      "expected_mode": null,
+      "expected_content_kind": "",
+      "expected_actionable": false,
+      "entity_scope": "complete",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": []
+    },
+    {
+      "shortcode": "CwXTvDANeCI",
+      "category": "inspiration",
+      "split": "development",
+      "source_title": "Citation romantique",
+      "rationale": "La transcription contient une citation affective complète, réutilisable comme inspiration, sans ressource ou objet à cataloguer.",
+      "expected_mode": "repertoire",
+      "expected_content_kind": "inspiration",
+      "expected_actionable": true,
+      "entity_scope": "complete",
+      "expected_entities": [],
+      "expected_recipes": [],
+      "unacceptable_errors": [],
+      "tuning_eligible": false
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "fixture_version": "1.0.0",
+  "hypothesis": "A list of places or travel events remains a recommendation even when formatted or described as a guide/itinerary; reusable recipes, lessons, and exercise methods remain repertoire.",
+  "prompt_variant": "Classify the content's purpose, not its format or label. A list of named venues, sights, shops, restaurants, events or destinations, including a travel guide or itinerary telling the viewer where to go, is mode=recommandation even when detailed and worth saving. Use mode=repertoire for reusable instructions, demonstrated recipes, exercises, skills or lessons that the viewer can perform or learn; the word guide alone does not make something a repertoire entry.",
+  "protocol": {
+    "model": "qwen3:8b",
+    "stage": "fiche only",
+    "decoding": "Current production settings via llm.chat_json",
+    "comparison": "Current system prompt vs one appended decision rule; same input, paired",
+    "holdout_policy": "Do not revise the variant after inspecting holdout scores. Any further prompt change requires a new untouched holdout fixture.",
+    "source_scope": "Source text is read from the existing database and copied into a fresh temporary database; no production extraction or database writes."
+  },
+  "development": [
+    {
+      "shortcode": "DFNJnmoTdR3",
+      "expected_mode": "recommandation",
+      "rationale": "Caption lists five named destinations near Tokyo, recommends them, and asks viewers to save the reel."
+    },
+    {
+      "shortcode": "DFkGENxTV9m",
+      "expected_mode": "recommandation",
+      "rationale": "Caption explicitly presents eight recommended places to visit in Kyoto."
+    },
+    {
+      "shortcode": "DawXVb2A7IX",
+      "expected_mode": "repertoire",
+      "rationale": "A free photography training teaches reusable camera concepts; it is a lesson rather than a list of places to visit."
+    },
+    {
+      "shortcode": "DVeCV-BiKk4",
+      "expected_mode": "repertoire",
+      "rationale": "Caption and transcript demonstrate a yakitori recipe with ingredients and steps."
+    }
+  ],
+  "holdout": [
+    {
+      "shortcode": "DIocI5vPQg9",
+      "expected_mode": "recommandation",
+      "rationale": "Caption lists named Tokyo food and cultural festivals with dates for visitors to choose among."
+    },
+    {
+      "shortcode": "DNC8yGWybt8",
+      "expected_mode": "recommandation",
+      "rationale": "Caption presents a day-trip itinerary with named places and activities to visit."
+    },
+    {
+      "shortcode": "DQOfWlAiBFh",
+      "expected_mode": "repertoire",
+      "rationale": "Caption gives ingredients for a soup recipe and invites viewers to save it for later."
+    },
+    {
+      "shortcode": "DK_YgF9TbyO",
+      "expected_mode": "repertoire",
+      "rationale": "Caption teaches a reusable knee-strengthening method with exercise principles."
+    }
+  ]
+}

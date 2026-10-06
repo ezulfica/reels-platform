@@ -1,0 +1,13 @@
+{
+  "fixture_version": "1.0.0",
+  "title": "Évaluation Hermes low sur six reels réels indépendants",
+  "protocol": {
+    "source_fixture": "qwen_extraction_60_v1.json",
+    "split": "development uniquement; différent de hermes_extraction_sample_v1",
+    "database": "SQLite temporaire neuve avec reel, reel_context, transcript et screen_text uniquement",
+    "backend": "hermes",
+    "reasoning": "low",
+    "temperature": "non contrôlable par la CLI Hermes 0.20.0"
+  },
+  "shortcodes": ["DPdeUxmD2th", "Da0PnbIzoLp", "DbKsktqITFi", "DbTZk_KtVwV", "DboXxjbMzAp", "DaXrEIttU1b"]
+}
