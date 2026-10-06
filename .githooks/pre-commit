@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+branch="$(git branch --show-current)"
+if [[ "$branch" == "main" ]]; then
+  cat >&2 <<'EOF'
+Direct commits to main are blocked.
+Create a branch, open a pull request, and merge only after CI passes.
+EOF
+  exit 1
+fi
+
+mapfile -t python_files < <(git diff --cached --name-only --diff-filter=ACMR | rg '\.py$' || true)
+if ((${#python_files[@]})); then
+  uv run ruff check --select E9,F63,F7,F82 "${python_files[@]}"
+fi

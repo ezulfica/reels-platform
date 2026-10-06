@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+while read -r local_ref _local_sha _remote_ref _remote_sha; do
+  if [[ "$local_ref" == "refs/heads/main" ]]; then
+    cat >&2 <<'EOF'
+Direct pushes to main are blocked locally.
+Push a branch and merge it through the protected remote branch.
+EOF
+    exit 1
+  fi
+done
+
+uv lock --check
+uv run ruff check --select E9,F63,F7,F82 src tests
+uv run pytest -q

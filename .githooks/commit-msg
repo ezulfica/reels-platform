@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+subject="$(head -n 1 "$1")"
+if [[ ! "$subject" =~ ^(build|chore|ci|docs|feat|fix|refactor|test)(\([a-z0-9._/-]+\))?!?:\ .+ ]]; then
+  cat >&2 <<'EOF'
+Use a Conventional Commit subject, for example:
+  feat: add entity browser
+  fix(web): preserve chat sessions
+EOF
+  exit 1
+fi
