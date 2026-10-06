@@ -98,6 +98,38 @@ secrets, cookies, and signed-in sessions remain outside the UI.
 Pipeline stages are idempotent. A failed or interrupted item resumes narrowly;
 normal operation does not replay the corpus.
 
+## Future cloud deployment
+
+The local-first deployment remains the reference. The cloud target keeps the
+catalogue and personal data private while running scheduled work only when it is
+needed.
+
+<details>
+<summary>Target architecture</summary>
+
+```mermaid
+flowchart TB
+  timer[Weekly scheduler] --> job[CPU Kubernetes Job]
+  job --> pg[(PostgreSQL)]
+  job --> objects[(Private object storage)]
+  job --> llm[Codex or LLM API]
+  job --> decision{GPU needed?}
+  decision -->|No| cpu[CPU ASR and OCR]
+  decision -->|Yes| gpu[Ephemeral GPU worker]
+  gpu --> objects
+  web[Private FastAPI web] --> pg
+  web --> objects
+  discord[Discord agent] --> mcp[Authenticated read-only MCP]
+  mcp --> pg
+```
+
+</details>
+
+PostgreSQL stores reels, entities, recipes, feedback, chat and pipeline state.
+Private object storage holds original and derived media. The web starts private
+behind a VPN or private network; a signed-URL CDN is an optional later media
+optimisation. See the [full cloud deployment plan](docs/en/cloud-deployment.md).
+
 ## Development quality gates
 
 Install the repository hooks once after cloning:
