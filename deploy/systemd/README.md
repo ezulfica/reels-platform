@@ -1,13 +1,15 @@
 # Services utilisateur
 
-Installer les unités locales :
+Depuis la racine du dépôt, installer ou actualiser les unités locales :
 
 ```bash
-mkdir -p ~/.config/systemd/user
-cp deploy/systemd/reels-*.service deploy/systemd/reels-*.timer ~/.config/systemd/user/
-systemctl --user daemon-reload
-systemctl --user enable --now reels-web.service reels-weekly.timer
+./scripts/install-systemd.sh
 ```
+
+L’installateur crée `~/.config/reels-platform/systemd.env` avec le chemin du
+checkout courant et de sa base SQLite. Ce fichier ne contient aucun secret et
+est régénéré à chaque installation : il permet de déplacer le checkout sans
+modifier les unités versionnées.
 
 Le web écoute sur `http://127.0.0.1:8420`. Le timer lance le dimanche à 10 h,
 et rattrape un déclenchement manqué au prochain démarrage grâce à `Persistent=true`.

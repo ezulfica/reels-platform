@@ -106,11 +106,12 @@ manuelle, ainsi qu’au prochain run hebdomadaire. Installer les services
 utilisateur une fois la configuration locale prête :
 
 ```bash
-mkdir -p ~/.config/systemd/user
-cp deploy/systemd/reels-*.service deploy/systemd/reels-*.timer ~/.config/systemd/user/
-systemctl --user daemon-reload
-systemctl --user enable --now reels-web.service reels-weekly.timer
+./scripts/install-systemd.sh
 ```
+
+Le script génère `~/.config/reels-platform/systemd.env` avec le checkout et la
+base choisis. Ce fichier local ne contient aucun secret ; il est régénéré lors
+d’une réinstallation et les unités versionnées restent indépendantes du chemin.
 
 Le MCP n’est pas un service réseau. L’agent externe le lance comme sous-processus
 stdio en lecture seule :

@@ -99,11 +99,12 @@ profile applies to new local chat and manual pipeline requests as well as the
 next weekly run. Install the user services when the local configuration is ready:
 
 ```bash
-mkdir -p ~/.config/systemd/user
-cp deploy/systemd/reels-*.service deploy/systemd/reels-*.timer ~/.config/systemd/user/
-systemctl --user daemon-reload
-systemctl --user enable --now reels-web.service reels-weekly.timer
+./scripts/install-systemd.sh
 ```
+
+The script generates `~/.config/reels-platform/systemd.env` with the selected
+checkout and database. This local file contains no secret; it is regenerated on
+reinstallation so the versioned units remain independent from the path.
 
 The MCP is not a network service. The external agent starts it as a read-only
 stdio subprocess:

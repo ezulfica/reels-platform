@@ -4,9 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/path/to/reels-platform
-Environment=REELS_DB_PATH=/path/to/reels-platform/db/reels.db
-ExecStart=/usr/bin/env uv run reels web --port 8420
+EnvironmentFile=%h/.config/reels-platform/systemd.env
+ExecStart=/usr/bin/env sh -c 'exec uv --directory "$REELS_PROJECT_DIR" run reels --db "$REELS_DB_PATH" web --port 8420'
 Restart=on-failure
 RestartSec=5
 
