@@ -12,3 +12,4 @@
 | Modèle de données | [FR](fr/data-model.md) | [EN](en/data-model.md) |
 | MCP local | [FR](fr/mcp.md) | [EN](en/mcp.md) |
 | Installation et exploitation locale | [FR](fr/local-setup.md) | [EN](en/local-setup.md) |
+| Politique de release | [FR](fr/politique-de-release.md) | [EN](en/release-policy.md) |
