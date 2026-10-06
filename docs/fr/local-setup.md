@@ -11,13 +11,14 @@ Prérequis : Python 3.11–3.12, `uv`, `ffmpeg`, `yt-dlp` et, pour l’enrichiss
 les dépendances ASR et OCR installées par `uv sync`.
 
 ```bash
-uv sync --group dev
-uv run reels status
-uv run reels web --port 8420
+make dev
 ```
 
 Ouvrir <http://127.0.0.1:8420>. Cette étape ne nécessite ni cookie Instagram ni
-connexion LLM lorsqu’une base locale existe déjà.
+connexion LLM lorsqu’une base locale existe déjà. `make dev` synchronise les
+dépendances de développement et les interfaces facultatives, puis lance le web
+avec rechargement automatique ; il ne déclenche pas la pipeline. `PORT` et `DB` restent configurables :
+`make dev PORT=8421 DB=/chemin/vers/reels.db`.
 
 ## 2. Configurer les secrets et l’inférence
 

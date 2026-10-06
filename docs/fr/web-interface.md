@@ -6,8 +6,13 @@ la CLI et ne lance aucune étape de pipeline au chargement d’une page.
 ## Lancement
 
 ```bash
-uv run reels web --port 8420
+make dev
 ```
+
+`make dev` synchronise les dépendances verrouillées de développement et les
+interfaces facultatives, puis lance l’application avec rechargement automatique
+sur `127.0.0.1:8420`. Il ne lance aucune étape de pipeline. Le port et la base
+peuvent être adaptés, par exemple `make dev PORT=8421 DB=/chemin/vers/reels.db`.
 
 La CLI transmet le chemin de base choisi dans `REELS_DB_PATH`, puis Uvicorn
 importe `interfaces.web.app:app`. En développement, ce module peut aussi être

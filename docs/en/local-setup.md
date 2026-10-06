@@ -10,13 +10,14 @@ Requirements: Python 3.11–3.12, `uv`, `ffmpeg`, `yt-dlp`, and, for enrichment,
 the local ASR and OCR dependencies installed by `uv sync`.
 
 ```bash
-uv sync --group dev
-uv run reels status
-uv run reels web --port 8420
+make dev
 ```
 
 Open <http://127.0.0.1:8420>. This requires neither an Instagram cookie nor an
-LLM connection when a local database already exists.
+LLM connection when a local database already exists. `make dev` synchronizes
+development and optional interface dependencies, then starts the web app with
+automatic reload; it never starts pipeline work. `PORT` and `DB` remain configurable, for example:
+`make dev PORT=8421 DB=/path/to/reels.db`.
 
 ## 2. Configure secrets and inference
 

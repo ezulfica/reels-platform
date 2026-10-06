@@ -43,12 +43,14 @@ Requirements: Python 3.11–3.12, [uv](https://docs.astral.sh/uv/), `ffmpeg`, an
 `yt-dlp`. Browsing an existing library does not need Instagram or LLM credentials.
 
 ```bash
-uv sync
-uv run reels web --port 8420
+make dev
 ```
 
 Open [http://127.0.0.1:8420](http://127.0.0.1:8420). The installed local service
-uses the same fixed address and port.
+uses the same fixed address and port. `make dev` installs the locked development
+and optional interface dependencies, then runs the web app with automatic
+reload. It never starts the pipeline. Use `make dev PORT=8421` or `make dev
+DB=/path/to/library.db` to override the local port or database.
 
 For capture or LLM-backed extraction, copy the documented local configuration
 template first. It is ignored by Git and contains no credentials.
@@ -116,7 +118,7 @@ optimisation. See the [full cloud deployment plan](docs/en/cloud-deployment.md).
 Install the repository hooks once after cloning:
 
 ```bash
-./scripts/install-git-hooks.sh
+make hooks
 ```
 
 The pre-commit hook rejects direct commits to `main`, checks staged Python files

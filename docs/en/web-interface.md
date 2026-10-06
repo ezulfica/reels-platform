@@ -6,8 +6,13 @@ database as the CLI and does not start pipeline work while loading a page.
 ## Run
 
 ```bash
-uv run reels web --port 8420
+make dev
 ```
+
+`make dev` synchronizes locked development and optional interface dependencies,
+then starts the app with automatic reload on `127.0.0.1:8420`. It never starts
+pipeline work. Adapt the port or database with, for example, `make dev PORT=8421
+DB=/path/to/reels.db`.
 
 The CLI passes the selected database through `REELS_DB_PATH`; Uvicorn imports
 `interfaces.web.app:app`. Development defaults to `db/reels.db`.
