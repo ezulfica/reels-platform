@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Reels Platform weekly
+
+[Timer]
+OnCalendar=Sun *-*-* 10:00:00
+Persistent=true
+Unit=reels-weekly.service
+
+[Install]
+WantedBy=timers.target

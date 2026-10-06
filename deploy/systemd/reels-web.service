@@ -1,0 +1,14 @@
+[Unit]
+Description=Reels Platform local web interface
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/reels-platform
+Environment=REELS_DB_PATH=/path/to/reels-platform/db/reels.db
+ExecStart=/usr/bin/env uv run reels web --port 8420
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

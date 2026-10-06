@@ -1,0 +1,12 @@
+[Unit]
+Description=Reels Platform weekly resumable pipeline
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/path/to/reels-platform
+Environment=REELS_DB_PATH=/path/to/reels-platform/db/reels.db
+Environment=REELS_LLM_BACKEND=codex
+Environment=REELS_CODEX_REASONING=low
+ExecStart=/usr/bin/env uv run reels weekly-run

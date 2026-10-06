@@ -1,0 +1,46 @@
+version: 1
+profiles:
+  codex-luna-low:
+    label: Codex · Luna · low
+    backend: codex
+    model: gpt-5.6-luna
+    reasoning: low
+    intended_for: Routine extraction
+  codex-luna-medium:
+    label: Codex · Luna · medium
+    backend: codex
+    model: gpt-5.6-luna
+    reasoning: medium
+    intended_for: More difficult extraction
+  codex-terra-low:
+    label: Codex · Terra · low
+    backend: codex
+    model: gpt-5.6-terra
+    reasoning: low
+    intended_for: Cost-quality comparison
+  codex-terra-medium:
+    label: Codex · Terra · medium
+    backend: codex
+    model: gpt-5.6-terra
+    reasoning: medium
+    intended_for: Frozen evaluation
+  hermes-low:
+    label: Hermes · low
+    backend: hermes
+    reasoning: low
+    intended_for: Fast external-agent execution
+  hermes-medium:
+    label: Hermes · medium
+    backend: hermes
+    reasoning: medium
+    intended_for: More difficult external-agent execution
+  api-default:
+    label: OpenAI-compatible API · default model
+    backend: api
+    model: gpt-5.6-luna
+    intended_for: Configured cloud API
+  ollama-local:
+    label: Ollama · local default model
+    backend: ollama
+    model: qwen3:8b
+    intended_for: Local model server
