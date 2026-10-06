@@ -11,21 +11,22 @@ the local ASR and OCR dependencies installed by `uv sync`.
 
 ```bash
 make dev
+make web
 ```
 
 Open <http://127.0.0.1:8420>. This requires neither an Instagram cookie nor an
 LLM connection when a local database already exists. `make dev` synchronizes
 development and optional interface dependencies, creates `.env` from the
-template only when absent, then starts the web app with automatic reload; it
-never starts pipeline work. `PORT` and `DB` remain configurable, for example:
-`make dev PORT=8421 DB=/path/to/reels.db`. Run `make init` once to also enable
-Git hooks and `make doctor` to inspect optional prerequisites.
+template only when absent, then enables Git hooks. `make web` starts the local
+interface and `make watch` adds automatic reload; neither starts pipeline work.
+`PORT` and `DB` remain configurable, for example: `make web PORT=8421
+DB=/path/to/reels.db`. Run `make doctor` to inspect optional prerequisites.
 
 ## 2. Configure secrets and inference
 
-`make dev` and `make init` create the untracked local configuration file from
-the template, with user-only permissions, only when it is absent. Add a value
-only when this machine captures saved Instagram media.
+`make dev`, `make web`, and `make watch` create the untracked local
+configuration file from the template, with user-only permissions, only when it
+is absent. Add a value only when this machine captures saved Instagram media.
 
 `.env.example` deliberately contains only `IG_SESSIONID`. The default setup uses
 the authenticated Codex CLI, Luna low, and CUDA ASR, so browsing and the default

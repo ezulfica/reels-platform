@@ -7,15 +7,16 @@ la CLI et ne lance aucune étape de pipeline au chargement d’une page.
 
 ```bash
 make dev
+make web
 ```
 
 `make dev` synchronise les dépendances verrouillées de développement et les
 interfaces facultatives, crée `.env` depuis le modèle uniquement s’il n’existe
-pas, puis lance l’application avec rechargement automatique sur
-`127.0.0.1:8420`. Il ne lance aucune étape de pipeline. Le port et la base peuvent
-être adaptés, par exemple `make dev PORT=8421 DB=/chemin/vers/reels.db`. Lancer
-`make init` une fois pour installer aussi les hooks Git, ou `make doctor` pour
-vérifier les outils locaux facultatifs.
+pas, puis active les hooks Git. `make web` lance l’application sur
+`127.0.0.1:8420`, tandis que `make watch` ajoute le rechargement automatique.
+Aucune de ces commandes ne lance la pipeline. Le port et la base peuvent être
+adaptés, par exemple `make web PORT=8421 DB=/chemin/vers/reels.db`. Lancer
+`make doctor` pour vérifier les outils locaux facultatifs.
 
 La CLI transmet le chemin de base choisi dans `REELS_DB_PATH`, puis Uvicorn
 importe `interfaces.web.app:app`. En développement, ce module peut aussi être

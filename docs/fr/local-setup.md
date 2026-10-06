@@ -12,22 +12,24 @@ les dépendances ASR et OCR installées par `uv sync`.
 
 ```bash
 make dev
+make web
 ```
 
 Ouvrir <http://127.0.0.1:8420>. Cette étape ne nécessite ni cookie Instagram ni
 connexion LLM lorsqu’une base locale existe déjà. `make dev` synchronise les
 dépendances de développement et les interfaces facultatives, crée `.env` depuis
-le modèle seulement s’il est absent, puis lance le web avec rechargement
-automatique ; il ne déclenche pas la pipeline. `PORT` et `DB` restent
-configurables : `make dev PORT=8421 DB=/chemin/vers/reels.db`. Utiliser
-`make init` une fois pour activer aussi les hooks Git et `make doctor` pour
-inspecter les prérequis facultatifs.
+le modèle seulement s’il est absent, puis active les hooks Git. `make web`
+lance l’interface locale et `make watch` ajoute le rechargement automatique ;
+aucune de ces commandes ne déclenche la pipeline. `PORT` et `DB` restent
+configurables : `make web PORT=8421 DB=/chemin/vers/reels.db`. Utiliser
+`make doctor` pour inspecter les prérequis facultatifs.
 
 ## 2. Configurer les secrets et l’inférence
 
-`make dev` et `make init` créent le fichier local non suivi depuis le modèle,
-avec les permissions utilisateur, seulement s’il n’existe pas. Ajouter une
-valeur uniquement si cette machine capture des médias Instagram sauvegardés.
+`make dev`, `make web` et `make watch` créent le fichier local non suivi depuis
+le modèle, avec les permissions utilisateur, seulement s’il n’existe pas.
+Ajouter une valeur uniquement si cette machine capture des médias Instagram
+sauvegardés.
 
 `.env.example` ne contient volontairement que `IG_SESSIONID`. La configuration
 par défaut utilise la CLI Codex authentifiée, Luna low et l’ASR CUDA : parcourir

@@ -4,7 +4,7 @@ UV ?= uv
 PORT ?= 8420
 DB ?= db/reels.db
 
-.PHONY: help setup env init dev status doctor test regression check hooks
+.PHONY: help setup env init dev web watch status doctor test regression check hooks
 
 help: ## Show available local development commands.
 	@awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z_-]+:.*##/ {printf "  %-12s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -20,9 +20,14 @@ env: ## Create a permission-restricted .env from the template when absent.
 		printf '%s\n' 'Created .env from .env.example; add credentials only when needed.'; \
 	fi
 
-init: setup env hooks ## Prepare a clone for local development without overwriting .env.
+init: dev ## Alias for `make dev`.
 
-dev: setup env ## Start the local web app with automatic reload.
+dev: setup env hooks ## Prepare a clone for local development without overwriting .env.
+
+web: setup env ## Start the local web application.
+	$(UV) run reels --db "$(DB)" web --port "$(PORT)"
+
+watch: setup env ## Start the local web application with automatic reload.
 	$(UV) run reels --db "$(DB)" web --port "$(PORT)" --reload
 
 status: ## Show the local library and pipeline state.
