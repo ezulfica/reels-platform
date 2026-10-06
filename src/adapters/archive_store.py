@@ -237,14 +237,13 @@ def archive_validated_original(
 def restore_object(store: ObjectStore, info: ObjectInfo, destination: Path) -> Path:
     """Restore an object and verify bytes before making the destination usable."""
     destination.parent.mkdir(parents=True, exist_ok=True)
-    handle = tempfile.NamedTemporaryFile(
+    with tempfile.NamedTemporaryFile(
         prefix=f".{destination.name}.",
         suffix=".restore",
         dir=destination.parent,
         delete=False,
-    )
-    temporary = Path(handle.name)
-    handle.close()
+    ) as handle:
+        temporary = Path(handle.name)
     try:
         downloaded = store.get(info.key, temporary)
         if not _matches(

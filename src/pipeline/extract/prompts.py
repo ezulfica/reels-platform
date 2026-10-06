@@ -11,11 +11,11 @@ import json
 
 from .contracts import (
     FACETS_BLOCK,
+    SCALES,
     ContentIndexResult,
     DiscoveryResult,
     EnrichmentResult,
     FicheResult,
-    SCALES,
 )
 
 # Historical one-shot contract retained for stored-response compatibility.

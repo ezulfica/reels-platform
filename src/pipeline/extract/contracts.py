@@ -268,7 +268,7 @@ class ExtractionResult(BaseModel):
     content_kind: Literal[
         "", "recipe", "exercise", "lesson", "method", "guide", "inspiration"
     ] = ""
-    recipes: list["RecipeCard"] = Field(default_factory=list)
+    recipes: list[RecipeCard] = Field(default_factory=list)
 
     _ratio = field_validator("confidence", mode="before")(
         Candidate._percent_to_ratio.__func__  # meme normalisation, meme raison
@@ -329,7 +329,6 @@ class EnrichedEntity(BaseModel):
     _ratio = field_validator("confidence", mode="before")(
         Candidate._percent_to_ratio.__func__
     )
-
 
     _street_is_a_site = field_validator("scale", mode="before")(
         Candidate._street_is_a_site.__func__

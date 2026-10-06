@@ -19,19 +19,17 @@ from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from config import settings as config
+from agent import chat as agent_chat  # noqa: F401 - public test seam
+from agent import conversations
+from agent import search as reels_query
 from config import runtime
-from storage import database as db
-import inference as reels_llm
+from domain import feedback as catalog_feedback
 from domain import reel_library
 from domain import repertoire as recipe_index
-from domain import feedback as catalog_feedback
 from pipeline.capture.download import MEDIA_ROOT
 from pipeline.extract import extract as extract_llm
 from pipeline.extract import review as extract_review
-from agent import chat as agent_chat
-from agent import conversations
-from agent import search as reels_query
+from storage import database as db
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -42,23 +40,74 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 # This projection is derived from already extracted facts: it is not persisted,
 # never calls a model and can evolve without replaying the corpus.
 _SPORT_TAGS = {
-    "sport", "fitness", "workout", "yoga", "mobilite", "souplesse", "etirement",
-    "renforcement", "musculation", "course", "tennis", "calisthenie", "posture",
-    "abdominaux", "gainage", "echauffement", "entrainement", "preparation physique",
+    "sport",
+    "fitness",
+    "workout",
+    "yoga",
+    "mobilite",
+    "souplesse",
+    "etirement",
+    "renforcement",
+    "musculation",
+    "course",
+    "tennis",
+    "calisthenie",
+    "posture",
+    "abdominaux",
+    "gainage",
+    "echauffement",
+    "entrainement",
+    "preparation physique",
 }
 
 
 _THEME_RULES = (
-    ("Food & restaurants", {"recipe", "restaurant"}, {"cuisine", "food", "restaurant", "recette", "izakaya", "gastronomie"}),
-    ("Learning & languages", {"lesson"}, {"langue", "language", "japonais", "vocabulaire", "phrase"}),
-    ("Sport & wellbeing", {"exercise"}, {"sport", "fitness", "workout", "yoga", "bien etre", "wellness"}),
-    ("Travel & places", {"place", "lodging", "transport"}, {"voyage", "travel", "roadtrip", "citytrip", "visit", "tourisme", "excursion"}),
-    ("Shopping & products", {"product", "brand", "shop"}, {"shopping", "souvenir", "cadeau", "achat", "occasion"}),
-    ("Culture & media", {"media"}, {"anime", "art", "culture", "streaming", "fantasy", "histoire"}),
-    ("Home & DIY", set(), {"maison", "mobilier", "decoration", "canape", "diy", "rangement", "nettoyage"}),
-    ("Nature & outdoors", set(), {"nature", "randonnee", "montagne", "panorama", "outdoor", "plage"}),
+    (
+        "Food & restaurants",
+        {"recipe", "restaurant"},
+        {"cuisine", "food", "restaurant", "recette", "izakaya", "gastronomie"},
+    ),
+    (
+        "Learning & languages",
+        {"lesson"},
+        {"langue", "language", "japonais", "vocabulaire", "phrase"},
+    ),
+    (
+        "Sport & wellbeing",
+        {"exercise"},
+        {"sport", "fitness", "workout", "yoga", "bien etre", "wellness"},
+    ),
+    (
+        "Travel & places",
+        {"place", "lodging", "transport"},
+        {"voyage", "travel", "roadtrip", "citytrip", "visit", "tourisme", "excursion"},
+    ),
+    (
+        "Shopping & products",
+        {"product", "brand", "shop"},
+        {"shopping", "souvenir", "cadeau", "achat", "occasion"},
+    ),
+    (
+        "Culture & media",
+        {"media"},
+        {"anime", "art", "culture", "streaming", "fantasy", "histoire"},
+    ),
+    (
+        "Home & DIY",
+        set(),
+        {"maison", "mobilier", "decoration", "canape", "diy", "rangement", "nettoyage"},
+    ),
+    (
+        "Nature & outdoors",
+        set(),
+        {"nature", "randonnee", "montagne", "panorama", "outdoor", "plage"},
+    ),
     ("Style & beauty", set(), {"mode", "beaute", "beauty", "skincare", "vintage"}),
-    ("Tech & creation", set(), {"ia", "photographie", "photo", "tech", "camera", "design"}),
+    (
+        "Tech & creation",
+        set(),
+        {"ia", "photographie", "photo", "tech", "camera", "design"},
+    ),
 )
 
 
@@ -66,7 +115,9 @@ def _is_sport(fiche: dict) -> bool:
     return bool({tag.casefold().strip() for tag in fiche["tags"]} & _SPORT_TAGS)
 
 
-def _theme_for_reel(content_kind: str | None, entity_types: set[str], tags: set[str]) -> str:
+def _theme_for_reel(
+    content_kind: str | None, entity_types: set[str], tags: set[str]
+) -> str:
     """Assign one broad dashboard theme from structured extraction fields."""
     normalized_tags = {tag.casefold().strip() for tag in tags}
     for label, types, markers in _THEME_RULES:
@@ -91,7 +142,7 @@ def _conn():
 def _dashboard(conn) -> dict:
     """Small, bounded view of database health for the local home page."""
     saved_where = "WHERE unsaved_at IS NULL"
-    scalar = lambda sql: conn.execute(sql).fetchone()[0]  # noqa: E731
+    scalar = lambda sql: conn.execute(sql).fetchone()[0]
     counts = {
         "saved": scalar(f"SELECT COUNT(*) FROM reel {saved_where}"),
         "downloaded": scalar(
@@ -127,11 +178,17 @@ def _dashboard(conn) -> dict:
     for row in theme_rows:
         tags: set[str] = set()
         try:
-            tags.update(value for value in json.loads(row["tags_json"] or "[]") if isinstance(value, str))
+            tags.update(
+                value
+                for value in json.loads(row["tags_json"] or "[]")
+                if isinstance(value, str)
+            )
         except json.JSONDecodeError:
             # A malformed historical tag payload must not hide a reel or break the page.
             pass
-        tags.update(value for value in (row["candidate_tags"] or "").split(",") if value)
+        tags.update(
+            value for value in (row["candidate_tags"] or "").split(",") if value
+        )
         entity_types = set((row["entity_types"] or "").split(",")) - {""}
         theme = _theme_for_reel(row["content_kind"], entity_types, tags)
         themes[theme] = themes.get(theme, 0) + 1
@@ -149,7 +206,12 @@ def _dashboard(conn) -> dict:
         "FROM reel r LEFT JOIN classification cl ON cl.shortcode=r.shortcode "
         "WHERE r.unsaved_at IS NULL ORDER BY r.first_seen_at DESC LIMIT 8"
     ).fetchall()
-    return {"counts": counts, "topics": topics, "entity_types": entity_types, "recent": recent}
+    return {
+        "counts": counts,
+        "topics": topics,
+        "entity_types": entity_types,
+        "recent": recent,
+    }
 
 
 # ---------------------------------------------------------------- dashboard
@@ -164,11 +226,20 @@ def dashboard(request: Request):
 
 
 @app.get("/reels")
-def reel_list(request: Request, flag: str | None = None, sort: str = "added_desc", page: int = 1, view: str = "grid"):
+def reel_list(
+    request: Request,
+    flag: str | None = None,
+    sort: str = "added_desc",
+    page: int = 1,
+    view: str = "grid",
+):
     conn = _conn()
     per_page = 25
     offset = (page - 1) * per_page
-    ordering = {"added_desc": "r.first_seen_at DESC", "added_asc": "r.first_seen_at ASC"}
+    ordering = {
+        "added_desc": "r.first_seen_at DESC",
+        "added_asc": "r.first_seen_at ASC",
+    }
     if sort not in ordering:
         raise HTTPException(status_code=400, detail="unknown reel sort")
     if view not in ("list", "grid"):
@@ -274,18 +345,21 @@ def reel_detail(request: Request, shortcode: str):
             "candidates": candidates,
             "types": extract_llm.TYPES,
             # Prefer the derived lightweight proxy; the original is only a local fallback.
-            "video_url": f"/media/{shortcode}/view" if proxy_path or original_path else None,
+            "video_url": f"/media/{shortcode}/view"
+            if proxy_path or original_path
+            else None,
             "poster_url": f"/media/{shortcode}/poster" if poster_path else None,
         },
     )
-
 
 
 # ------------------------------------------------------------------ gold
 
 
 @app.get("/catalog")
-def catalog_list(request: Request, q: str = "", type_: str = "", status: str = "", view: str = "grid"):
+def catalog_list(
+    request: Request, q: str = "", type_: str = "", status: str = "", view: str = "grid"
+):
     conn = _conn()
     if view not in ("list", "grid"):
         raise HTTPException(status_code=400, detail="unknown view")
@@ -386,7 +460,9 @@ def entity_detail(request: Request, entity_id: int):
     conn = _conn()
     entity = conn.execute("SELECT * FROM entity WHERE id=?", (entity_id,)).fetchone()
     if not entity:
-        return templates.TemplateResponse(request, "not_found.html", {"shortcode": entity_id}, status_code=404)
+        return templates.TemplateResponse(
+            request, "not_found.html", {"shortcode": entity_id}, status_code=404
+        )
     sources = conn.execute(
         "SELECT r.shortcode, r.username, r.url, r.caption, cl.predicted_topic, m.poster_path "
         "FROM entity_reel er JOIN reel r ON r.shortcode=er.shortcode "
@@ -404,7 +480,12 @@ def entity_detail(request: Request, entity_id: int):
         {
             "entity": entity,
             "sources": [
-                {**dict(source), "poster_url": f"/media/{source['shortcode']}/poster" if _managed_path(source["poster_path"]) else None}
+                {
+                    **dict(source),
+                    "poster_url": f"/media/{source['shortcode']}/poster"
+                    if _managed_path(source["poster_path"])
+                    else None,
+                }
                 for source in sources
             ],
             "personal": personal,
@@ -439,12 +520,19 @@ def catalog_feedback_submit(
         raise HTTPException(status_code=400, detail=str(error)) from error
     if return_to == f"/entity/{entity_id}":
         return RedirectResponse(return_to, status_code=303)
-    return RedirectResponse("/catalog?" + urlencode({"q": q, "type_": type_}), status_code=303)
+    return RedirectResponse(
+        "/catalog?" + urlencode({"q": q, "type_": type_}), status_code=303
+    )
 
 
 @app.get("/recipes")
 def recipe_list(
-    request: Request, q: str = "", cuisine: str = "", course: str = "", status: str = "", view: str = "grid"
+    request: Request,
+    q: str = "",
+    cuisine: str = "",
+    course: str = "",
+    status: str = "",
+    view: str = "grid",
 ):
     conn = _conn()
     if view not in ("list", "grid"):
@@ -461,7 +549,14 @@ def recipe_list(
     )
     # Options follow the current result set, instead of exposing every historic
     # vocabulary value regardless of the selected text, course or personal state.
-    cuisines = sorted({value for recipe in rows for value in (recipe["cuisine_family"], recipe["cuisine"]) if value})
+    cuisines = sorted(
+        {
+            value
+            for recipe in rows
+            for value in (recipe["cuisine_family"], recipe["cuisine"])
+            if value
+        }
+    )
     courses = sorted({recipe["course"] for recipe in rows if recipe["course"]})
     return templates.TemplateResponse(
         request,
@@ -629,21 +724,50 @@ def view_poster(shortcode: str):
     return FileResponse(path, media_type=media_type, filename=path.name)
 
 
-
 @app.get("/settings")
 def settings_page(request: Request):
     values = runtime.load()
-    return templates.TemplateResponse(request, "settings.html", {"values": values, "profiles": runtime.profiles(), "days": runtime.DAYS, "saved": request.query_params.get("saved") == "1", "error": None})
+    return templates.TemplateResponse(
+        request,
+        "settings.html",
+        {
+            "values": values,
+            "profiles": runtime.profiles(),
+            "days": runtime.DAYS,
+            "saved": request.query_params.get("saved") == "1",
+            "error": None,
+        },
+    )
 
 
 @app.post("/settings")
-def settings_save(request: Request, enabled: str = Form(""), day: str = Form(...), time: str = Form(...), profile: str = Form(...)):
+def settings_save(
+    request: Request,
+    enabled: str = Form(""),
+    day: str = Form(...),
+    time: str = Form(...),
+    profile: str = Form(...),
+):
     try:
-        values = runtime.save({"enabled": enabled == "on", "day": day, "time": time, "profile": profile})
+        values = runtime.save(
+            {"enabled": enabled == "on", "day": day, "time": time, "profile": profile}
+        )
         runtime.apply(values)
     except (ValueError, OSError, subprocess.SubprocessError) as error:
-        return templates.TemplateResponse(request, "settings.html", {"values": runtime.load(), "profiles": runtime.profiles(), "days": runtime.DAYS, "saved": False, "error": str(error)}, status_code=400)
+        return templates.TemplateResponse(
+            request,
+            "settings.html",
+            {
+                "values": runtime.load(),
+                "profiles": runtime.profiles(),
+                "days": runtime.DAYS,
+                "saved": False,
+                "error": str(error),
+            },
+            status_code=400,
+        )
     return RedirectResponse("/settings?saved=1", status_code=303)
+
 
 # ------------------------------------------------------------------- chat
 
@@ -654,16 +778,31 @@ def chat_page(request: Request, session_id: int | None = None):
     active = conversations.get(conn, session_id) if session_id else None
     if session_id and not active:
         raise HTTPException(status_code=404, detail="conversation introuvable")
-    return templates.TemplateResponse(request, "chat.html", {"sessions": conversations.sessions(conn), "active": active, "error": None})
+    return templates.TemplateResponse(
+        request,
+        "chat.html",
+        {"sessions": conversations.sessions(conn), "active": active, "error": None},
+    )
 
 
 @app.post("/chat")
 def chat_submit(request: Request, message: str = Form(...), session_id: str = Form("")):
     try:
-        identifier = conversations.ask(_conn(), int(session_id) if session_id else None, message)
+        identifier = conversations.ask(
+            _conn(), int(session_id) if session_id else None, message
+        )
     except ValueError as error:
         conn = _conn()
-        return templates.TemplateResponse(request, "chat.html", {"sessions": conversations.sessions(conn), "active": None, "error": str(error)}, status_code=400)
+        return templates.TemplateResponse(
+            request,
+            "chat.html",
+            {
+                "sessions": conversations.sessions(conn),
+                "active": None,
+                "error": str(error),
+            },
+            status_code=400,
+        )
     return RedirectResponse(f"/chat?session_id={identifier}", status_code=303)
 
 

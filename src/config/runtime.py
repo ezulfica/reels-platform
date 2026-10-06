@@ -81,7 +81,7 @@ def _read_yaml(path: Path) -> dict:
     except yaml.YAMLError as error:
         raise ValueError(f"invalid YAML in {path.name}: {error}") from error
     if not isinstance(value, dict):
-        raise ValueError(f"{path.name} must contain a YAML mapping")
+        raise TypeError(f"{path.name} must contain a YAML mapping")
     return value
 
 
@@ -101,7 +101,7 @@ def profiles() -> dict[str, Profile]:
     overlap = set(catalogue.profiles) & set(local_catalogue.profiles)
     if overlap:
         raise ValueError(
-            f"local LLM profile duplicates project profile: {sorted(overlap)[0]}"
+            f"local LLM profile duplicates project profile: {min(overlap)}"
         )
     return {**catalogue.profiles, **local_catalogue.profiles}
 

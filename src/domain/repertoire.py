@@ -9,10 +9,9 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from typing import Iterable
+from collections.abc import Iterable
 
 from storage.database import now
-
 
 CONTENT_KINDS = ("recipe", "exercise", "lesson", "method", "guide", "inspiration")
 RECIPE_VERDICTS = ("want_to_try", "liked", "favorite", "disappointing", "avoid")

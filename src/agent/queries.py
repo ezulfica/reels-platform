@@ -10,9 +10,9 @@ from __future__ import annotations
 import sqlite3
 from typing import Any
 
+from domain import reel_library, repertoire
+
 from . import search as query
-from domain import repertoire
-from domain.reel_library import get as get_reel
 
 
 def search_entities(
@@ -71,6 +71,11 @@ def get_entity(conn: sqlite3.Connection, entity_id: int) -> dict[str, Any] | Non
         )
     ]
     return result
+
+
+def get_reel(conn: sqlite3.Connection, shortcode: str) -> dict[str, Any] | None:
+    """Return one source reel through the agent's read-only query surface."""
+    return reel_library.get(conn, shortcode)
 
 
 def database_summary(conn: sqlite3.Connection) -> dict[str, Any]:

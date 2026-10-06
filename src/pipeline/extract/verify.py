@@ -19,6 +19,7 @@ import sys
 from pydantic import BaseModel, Field
 
 import inference as llm
+
 from .extract import build_context
 from .heuristics import is_attested, sources_of
 

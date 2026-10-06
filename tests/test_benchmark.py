@@ -10,11 +10,19 @@ def test_benchmark_database_contains_only_selected_source_evidence(tmp_path):
     source_path = tmp_path / "source.sqlite"
     source = db.connect(source_path)
     db.initialize(source)
-    source.execute("INSERT INTO reel (shortcode, url, caption, first_seen_at, last_seen_at) VALUES ('AAA', 'https://instagram.test/AAA', 'caption', 'a', 'a')")
-    source.execute("INSERT INTO reel (shortcode, url, first_seen_at, last_seen_at) VALUES ('BBB', 'https://instagram.test/BBB', 'b', 'b')")
+    source.execute(
+        "INSERT INTO reel (shortcode, url, caption, first_seen_at, last_seen_at) VALUES ('AAA', 'https://instagram.test/AAA', 'caption', 'a', 'a')"
+    )
+    source.execute(
+        "INSERT INTO reel (shortcode, url, first_seen_at, last_seen_at) VALUES ('BBB', 'https://instagram.test/BBB', 'b', 'b')"
+    )
     source.execute("INSERT INTO reel_context (shortcode) VALUES ('AAA')")
-    source.execute("INSERT INTO transcript (shortcode, tool_version, text, created_at) VALUES ('AAA', 'v1', 'audio', 'a')")
-    source.execute("INSERT INTO screen_text (shortcode, tool_version, text, created_at) VALUES ('BBB', 'v1', 'ocr', 'b')")
+    source.execute(
+        "INSERT INTO transcript (shortcode, tool_version, text, created_at) VALUES ('AAA', 'v1', 'audio', 'a')"
+    )
+    source.execute(
+        "INSERT INTO screen_text (shortcode, tool_version, text, created_at) VALUES ('BBB', 'v1', 'ocr', 'b')"
+    )
     source.commit()
     source.close()
 

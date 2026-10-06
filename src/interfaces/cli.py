@@ -8,34 +8,32 @@ import os
 import sys
 from pathlib import Path
 
-from domain import feedback as catalog_feedback
-from domain import reel_library
-from domain import repertoire
-from quality import benchmark as reels_benchmark
-from quality import regression as reels_regression
-from storage import database as db
+import inference as llm
 from adapters import video_archive
+from agent import search as reels_query
+from domain import feedback as catalog_feedback
+from domain import reel_library, repertoire
+from pipeline import sync_manifest
 from pipeline.capture import collections as capture_collections
 from pipeline.capture import download as capture_download
 from pipeline.capture import instagram
 from pipeline.capture.session import IGError, make_session
 from pipeline.catalogue import resolve as catalog_resolve
-from agent import search as reels_query
 from pipeline.enrich import asr as enrich_asr
+from pipeline.enrich import ocr as enrich_ocr
 from pipeline.extract import extract as extract_llm
 from pipeline.extract import review as extract_review
-from pipeline.enrich import ocr as enrich_ocr
 from pipeline.extract import verify as extract_verify
-import inference as llm
-from pipeline import sync_manifest
+from quality import benchmark as reels_benchmark
+from quality import regression as reels_regression
 from quality import tuning as reels_tuning
+from storage import database as db
 
 
 def _conn(args):
     conn = db.connect(args.db)
     db.initialize(conn)
     return conn
-
 
 
 def cmd_status(args) -> int:
@@ -588,11 +586,8 @@ def cmd_review(args) -> int:
         label = extract_review.REASON_LABELS[it["reason"]]
         print(f"  [{label}] {it['shortcode']}")
         print(f"    {it['detail']}")
-    print(
-        f"\n  {len(items)} diagnostics à inspecter dans la fiche source.\n"
-    )
+    print(f"\n  {len(items)} diagnostics à inspecter dans la fiche source.\n")
     return 0
-
 
 
 def cmd_verify(args) -> int:
@@ -770,7 +765,9 @@ def main(argv: list[str] | None = None) -> int:
     video_check.add_argument("shortcode")
     video_check.set_defaults(fn=cmd_validate_video)
 
-    frames = sub.add_parser("prepare-entity-frames", help="create first-frame previews for entity sources")
+    frames = sub.add_parser(
+        "prepare-entity-frames", help="create first-frame previews for entity sources"
+    )
     frames.set_defaults(fn=cmd_prepare_entity_frames)
 
     video_assets = sub.add_parser(
@@ -810,8 +807,6 @@ def main(argv: list[str] | None = None) -> int:
         help="show only one category",
     )
     review.set_defaults(fn=cmd_review)
-
-
 
     verify = sub.add_parser("verify", help="confront each entity with the source text")
     verify.add_argument("--limit", type=int, help="stop after N candidates")

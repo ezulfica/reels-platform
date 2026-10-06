@@ -10,10 +10,9 @@ import sqlite3
 from collections.abc import Collection
 
 from .capture import download, instagram
-from .enrich import asr, ocr
-from .extract import extract
-from .extract import verify
 from .catalogue import resolve
+from .enrich import asr, ocr
+from .extract import extract, verify
 
 
 def run_capture(

@@ -204,8 +204,10 @@ def report(conn: sqlite3.Connection) -> list[str]:
         out += [
             "",
             f"  ASR CONFIDENCE  ({ca['n']} reels with speech)",
-            f"    median {ca['median'][0]:.2f} | p10 {ca['p10'][0]:.2f} "
-            f"| min {ca['min'][0]:.2f} | max {ca['max'][0]:.2f}",
+            (
+                f"    median {ca['median'][0]:.2f} | p10 {ca['p10'][0]:.2f} "
+                f"| min {ca['min'][0]:.2f} | max {ca['max'][0]:.2f}"
+            ),
             "    the 5 least confident (probable musical soundtrack):",
         ] + [f"      {sc}  {v:.2f}" for v, sc in ca["worst"]]
     else:
@@ -223,9 +225,11 @@ def report(conn: sqlite3.Connection) -> list[str]:
             "",
             f"  SOURCES  ({src['total']} verified entities)",
             f"    attested by caption/ASR/mentions : {src['caption_asr']}",
-            f"    attested ONLY by the OCR         : {src['ocr_only']}"
-            f"  ({100 * src['ocr_only'] // src['total']}%)"
-            f" across {len(carriers)} reels",
+            (
+                f"    attested ONLY by the OCR         : {src['ocr_only']}"
+                f"  ({100 * src['ocr_only'] // src['total']}%)"
+                f" across {len(carriers)} reels"
+            ),
             f"    reworded by the model            : {src['reworded']}",
         ]
         # A reel carrying OCR-only entities that exceeds the frame cap is the case

@@ -124,7 +124,9 @@ def validate(conn: sqlite3.Connection, shortcode: str) -> dict:
 
 def make_first_frame(conn: sqlite3.Connection, shortcode: str) -> str:
     """Derive a stable first frame for navigation, without creating a proxy."""
-    row = conn.execute("SELECT mp4_path FROM media WHERE shortcode=?", (shortcode,)).fetchone()
+    row = conn.execute(
+        "SELECT mp4_path FROM media WHERE shortcode=?", (shortcode,)
+    ).fetchone()
     if not row or not row["mp4_path"]:
         raise ValueError(f"no local video for {shortcode}")
     source = Path(row["mp4_path"])
@@ -132,15 +134,33 @@ def make_first_frame(conn: sqlite3.Connection, shortcode: str) -> str:
         raise ValueError(f"missing local video for {shortcode}")
     poster = source.parent / f"{source.stem}-first-frame.jpg"
     if not poster.is_file() or poster.stat().st_size == 0:
-        subprocess.run(["ffmpeg", "-y", "-i", str(source), "-frames:v", "1", "-q:v", "3", str(poster)], check=True, capture_output=True)
-    conn.execute("UPDATE media SET poster_path=? WHERE shortcode=?", (str(poster), shortcode))
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(source),
+                "-frames:v",
+                "1",
+                "-q:v",
+                "3",
+                str(poster),
+            ],
+            check=True,
+            capture_output=True,
+        )
+    conn.execute(
+        "UPDATE media SET poster_path=? WHERE shortcode=?", (str(poster), shortcode)
+    )
     conn.commit()
     return str(poster)
 
 
 def make_entity_first_frames(conn: sqlite3.Connection) -> dict[str, int]:
     """Create missing first frames only for reels that illustrate catalogue entities."""
-    rows = conn.execute("SELECT DISTINCT er.shortcode FROM entity_reel er JOIN media m ON m.shortcode=er.shortcode WHERE m.mp4_path IS NOT NULL").fetchall()
+    rows = conn.execute(
+        "SELECT DISTINCT er.shortcode FROM entity_reel er JOIN media m ON m.shortcode=er.shortcode WHERE m.mp4_path IS NOT NULL"
+    ).fetchall()
     stats = {"done": 0, "failed": 0}
     for row in rows:
         try:
@@ -162,7 +182,7 @@ def make_viewing_assets(
         raise ValueError(f"no local video for {shortcode}")
     source = Path(row["mp4_path"])
     info = validate(conn, shortcode)
-    duration = float(row["duration_s"] or info["duration_s"])
+    float(row["duration_s"] or info["duration_s"])
     target_dir = source.parent
     poster = target_dir / f"{source.stem}-first-frame.jpg"
     proxy = target_dir / f"{source.stem}-proxy.mp4"

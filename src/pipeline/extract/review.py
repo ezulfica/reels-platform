@@ -27,7 +27,6 @@ REASON_LABELS = {
 }
 
 
-
 def queue(
     conn: sqlite3.Connection,
     limit: int | None = None,

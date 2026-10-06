@@ -19,12 +19,11 @@ from __future__ import annotations
 
 import json
 import subprocess
-
-import requests
 from types import SimpleNamespace
 
-from config import settings as config
+import requests
 
+from config import settings as config
 
 _USAGE = {
     "requests": 0,
@@ -71,7 +70,7 @@ class HermesClient:
 
     def generate(self, *, model: str, prompt: str, keep_alive: int = 0) -> None:
         """Match Ollama's unload seam; Hermes owns its own process lifecycle."""
-        return None
+        return
 
     def chat(
         self,
@@ -123,7 +122,7 @@ class CodexClient:
 
     def generate(self, *, model: str, prompt: str, keep_alive: int = 0) -> None:
         """Match Ollama's unload seam; Codex subprocesses are already ephemeral."""
-        return None
+        return
 
     def chat(
         self,
@@ -401,9 +400,16 @@ def chat_text(
     settings = generation_settings(temperature=temperature)
     response = cli.chat(
         model=model_name,
-        messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
         think=settings["think"],
-        options={"num_ctx": settings["num_ctx"], "temperature": temperature, "num_predict": 1200},
+        options={
+            "num_ctx": settings["num_ctx"],
+            "temperature": temperature,
+            "num_predict": 1200,
+        },
     )
     content = (response.message.content or "").strip()
     if not content:
@@ -411,8 +417,12 @@ def chat_text(
     _USAGE["requests"] += 1
     _USAGE["input_chars"] += len(system) + len(user)
     _USAGE["output_chars"] += len(content)
-    for field, key in (("input_tokens", "input_tokens"), ("output_tokens", "output_tokens"),
-                       ("prompt_eval_count", "prompt_eval_count"), ("eval_count", "eval_count")):
+    for field, key in (
+        ("input_tokens", "input_tokens"),
+        ("output_tokens", "output_tokens"),
+        ("prompt_eval_count", "prompt_eval_count"),
+        ("eval_count", "eval_count"),
+    ):
         value = getattr(response, field, None)
         if isinstance(value, int):
             _USAGE[key] += value

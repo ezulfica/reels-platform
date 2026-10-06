@@ -4,22 +4,16 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from types import SimpleNamespace
 from pathlib import Path
 
 import pytest
 
+import inference as llm
 from adapters import video_archive
 from config import settings as config
-from domain import canonicalization
+from domain import canonicalization, repertoire
 from domain import feedback as catalog_feedback
 from domain import reel_library as library
-from domain import repertoire
-import inference as llm
-from quality import regression
-from storage import database as db
-from pipeline.catalogue import resolve as catalog_resolve
-from pipeline.extract import extract
 from pipeline.capture.instagram import (
     collection_ids,
     media_kind,
@@ -27,7 +21,11 @@ from pipeline.capture.instagram import (
     parse_reel,
     upsert_reels,
 )
+from pipeline.catalogue import resolve as catalog_resolve
 from pipeline.enrich.ocr import ocr_frames, ocr_observations
+from pipeline.extract import extract
+from quality import regression
+from storage import database as db
 
 
 @pytest.fixture
@@ -889,7 +887,7 @@ def test_download_can_retry_only_requested_shortcodes(conn, monkeypatch, tmp_pat
     monkeypatch.setattr(
         dl,
         "download_one",
-        lambda shortcode, *args: (attempted.append(shortcode) or (200, output, "")),
+        lambda shortcode, *args: attempted.append(shortcode) or (200, output, ""),
     )
 
     stats = dl.download(conn, shortcodes=["BBB"], delay=(0, 0))
@@ -2285,7 +2283,9 @@ def test_asr_model_uses_cuda_by_default(monkeypatch):
 
     captured = {}
     monkeypatch.setenv("REELS_ASR_DEVICE", "cuda")
-    monkeypatch.setattr(asr, "_configure_cuda_runtime", lambda: captured.setdefault("cuda", True))
+    monkeypatch.setattr(
+        asr, "_configure_cuda_runtime", lambda: captured.setdefault("cuda", True)
+    )
     monkeypatch.setattr(
         asr,
         "WhisperModel",

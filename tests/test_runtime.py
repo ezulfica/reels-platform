@@ -10,7 +10,7 @@ def test_selected_profile_drives_non_sensitive_inference_settings(
     tmp_path, monkeypatch
 ):
     monkeypatch.setattr(runtime, "CONFIG_PATH", tmp_path / "runtime.json")
-    monkeypatch.setattr(settings, "_env", lambda: {})
+    monkeypatch.setattr(settings, "_env", dict)
     monkeypatch.delenv("REELS_LLM_BACKEND", raising=False)
     monkeypatch.delenv("REELS_MODEL_CODEX", raising=False)
     monkeypatch.delenv("REELS_CODEX_REASONING", raising=False)

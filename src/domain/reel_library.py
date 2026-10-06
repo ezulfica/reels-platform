@@ -17,7 +17,11 @@ from .canonicalization import normalised_key
 
 
 def search(
-    conn: sqlite3.Connection, text: str = "", *, content_kind: str | None = None, limit: int = 25
+    conn: sqlite3.Connection,
+    text: str = "",
+    *,
+    content_kind: str | None = None,
+    limit: int = 25,
 ) -> list[dict]:
     """Return the most relevant repertoire fiches, newest first without text."""
     if text.strip():

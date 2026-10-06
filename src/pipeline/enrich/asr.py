@@ -87,6 +87,7 @@ def has_audio_stream(mp4_path: Path) -> bool:
                 str(mp4_path),
             ],
             capture_output=True,
+            check=False,
             text=True,
             timeout=30,
         )
@@ -232,7 +233,6 @@ def run(conn: sqlite3.Connection, limit: int | None = None) -> dict[str, int]:
             else:
                 stats["no_speech"] += 1
                 print(f"  [{i}/{len(todo)}] {shortcode} no voice-over", file=sys.stderr)
-
 
     finally:
         del model

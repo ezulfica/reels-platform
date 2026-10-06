@@ -18,8 +18,9 @@ import json
 import sqlite3
 from urllib.parse import quote_plus
 
-from storage.database import now
 from domain.canonicalization import normalised_key
+from storage.database import now
+
 from ..extract import extract
 
 # These types have a real physical address: a Maps link makes sense. The others
@@ -78,9 +79,7 @@ def _pick_canonical_name(rows: list[sqlite3.Row]) -> str:
     counts: dict[str, int] = {}
     for row in rows:
         resolved = (
-            (row["resolved_name"] or "").strip()
-            if "resolved_name" in row.keys()
-            else ""
+            (row["resolved_name"] or "").strip() if "resolved_name" in row else ""
         )
         n = resolved or (row["name_latin"] or "").strip() or row["name"]
         counts[n] = counts.get(n, 0) + 1
@@ -269,9 +268,7 @@ def _group_candidates(
 
     groups: dict[tuple[str, str], list[sqlite3.Row]] = {}
     for c in candidates:
-        resolved = (
-            (c["resolved_name"] or "").strip() if "resolved_name" in c.keys() else ""
-        )
+        resolved = (c["resolved_name"] or "").strip() if "resolved_name" in c else ""
         key = (c["type"], normalize_name(resolved or c["name"]))
         key = alias_to_group.get(key, key)
         groups.setdefault(key, []).append(c)

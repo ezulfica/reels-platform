@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import asyncio
 
-import pytest
 import httpx
+import pytest
 
-from domain import repertoire
-from storage import database as db
-from pipeline.capture.instagram import upsert_reels
-from interfaces.web import app as web
 from config import runtime
+from domain import repertoire
+from interfaces.web import app as web
+from pipeline.capture.instagram import upsert_reels
+from storage import database as db
 
 
 class _ASGIClient:
@@ -55,8 +55,8 @@ def web_client(tmp_path, monkeypatch):
         kwargs.pop("limiter", None)
         return function(*args, **kwargs)
 
-    import starlette.routing
     import fastapi.routing
+    import starlette.routing
 
     monkeypatch.setattr(starlette.routing, "run_in_threadpool", inline_sync_call)
     monkeypatch.setattr(fastapi.routing, "run_in_threadpool", inline_sync_call)
@@ -122,7 +122,6 @@ def _recipe(conn, shortcode="FOOD"):
     ).fetchone()[0]
 
 
-
 def test_web_connection_uses_selected_database_path(tmp_path, monkeypatch):
     selected = tmp_path / "selected.db"
     monkeypatch.setenv("REELS_DB_PATH", str(selected))
@@ -131,6 +130,7 @@ def test_web_connection_uses_selected_database_path(tmp_path, monkeypatch):
 
     assert selected.exists()
     assert conn.execute("SELECT 1 FROM sqlite_master WHERE name='reel'").fetchone()
+
 
 def test_dashboard_summarises_saved_data_and_links_to_browser(web_client):
     conn, client, _ = web_client
@@ -169,6 +169,7 @@ def test_settings_selects_a_validated_llm_profile(web_client, monkeypatch):
 
     assert response.status_code == 303
     assert applied["profile"] == "codex-terra-medium"
+
 
 def test_recipe_filters_and_detail_render_source_personal_and_optional_links(
     web_client, monkeypatch
@@ -273,9 +274,9 @@ def test_reel_detail_embeds_local_proxy_and_poster(web_client):
     page = client.get("/reel/WATCH")
 
     assert page.status_code == 200
-    assert '<video controls' in page.text
-    assert '/media/WATCH/view' in page.text
-    assert '/media/WATCH/poster' in page.text
+    assert "<video controls" in page.text
+    assert "/media/WATCH/view" in page.text
+    assert "/media/WATCH/poster" in page.text
 
 
 def test_catalogue_shortlist_feedback_is_explicit_and_keeps_history(web_client):

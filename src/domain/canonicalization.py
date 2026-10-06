@@ -16,7 +16,6 @@ from typing import Protocol
 
 from storage.database import now
 
-
 SOURCE_PRIORITY = {"caption": 4, "account": 3, "ocr": 2, "transcript": 1}
 SOURCE_CONFIDENCE = {"caption": 0.99, "account": 0.98, "ocr": 0.95, "transcript": 0.60}
 
@@ -30,7 +29,7 @@ class PlaceAuthorityAdapter(Protocol):
 
     def suggest(
         self, observed_name: str, *, locality: str | None = None
-    ) -> "AuthoritySuggestion | None": ...
+    ) -> AuthoritySuggestion | None: ...
 
 
 @dataclass(frozen=True)

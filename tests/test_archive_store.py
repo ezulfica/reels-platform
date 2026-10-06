@@ -4,8 +4,9 @@ import hashlib
 import io
 import sqlite3
 import sys
-from types import SimpleNamespace
 from pathlib import Path
+from types import SimpleNamespace
+from typing import ClassVar
 
 import pytest
 
@@ -41,7 +42,10 @@ class FakeStore:
 
 
 class MissingS3Object(Exception):
-    response = {"ResponseMetadata": {"HTTPStatusCode": 404}, "Error": {"Code": "404"}}
+    response: ClassVar = {
+        "ResponseMetadata": {"HTTPStatusCode": 404},
+        "Error": {"Code": "404"},
+    }
 
 
 class FakeS3Client:

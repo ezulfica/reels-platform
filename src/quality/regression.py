@@ -14,18 +14,18 @@ def load_cases(path: Path) -> list[dict]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     cases = payload.get("cases") if isinstance(payload, dict) else None
     if not isinstance(cases, list):
-        raise ValueError("regression file must contain a cases list")
+        raise TypeError("regression file must contain a cases list")
     for case in cases:
         if not isinstance(case, dict) or not isinstance(case.get("shortcode"), str):
-            raise ValueError("each regression case needs a shortcode")
+            raise TypeError("each regression case needs a shortcode")
         if not all(isinstance(name, str) for name in case.get("expected_names", [])):
-            raise ValueError("expected_names must be a list of strings")
+            raise TypeError("expected_names must be a list of strings")
         entities = case.get("expected_entities", [])
         if not isinstance(entities, list):
-            raise ValueError("expected_entities must be a list")
+            raise TypeError("expected_entities must be a list")
         for entity in entities:
             if not isinstance(entity, dict) or not isinstance(entity.get("name"), str):
-                raise ValueError("each expected entity needs a name")
+                raise TypeError("each expected entity needs a name")
             types = entity.get(
                 "types", [entity.get("type")] if entity.get("type") else []
             )

@@ -12,11 +12,13 @@ import re
 import sqlite3
 import sys
 import time
-from typing import Any, Callable, Iterable
+from collections.abc import Callable, Iterable
+from typing import Any
 
 import requests
 
 from storage.database import now
+
 from .session import API, get_json
 
 # A caption announcing a list signals a multi-entity reel: v1 only produced a
@@ -67,7 +69,7 @@ def parse_reel(media: dict) -> dict[str, Any]:
 def parse_context(media: dict) -> dict[str, Any]:
     """Rich fields present in the raw payload and never used in v1."""
     caption = (media.get("caption") or {}).get("text") or ""
-    dumps = lambda v: json.dumps(v, ensure_ascii=False) if v else None  # noqa: E731
+    dumps = lambda v: json.dumps(v, ensure_ascii=False) if v else None
     return {
         "shortcode": media.get("code") or "",
         "location_json": dumps(media.get("location")),
@@ -239,8 +241,9 @@ def mark_unsaved(conn: sqlite3.Connection, seen: set[str]) -> int:
     cur = (
         conn.execute(
             "UPDATE reel SET unsaved_at = ? "
-            "WHERE unsaved_at IS NULL AND shortcode NOT IN (%s)"
-            % ",".join("?" * len(seen)),
+            "WHERE unsaved_at IS NULL AND shortcode NOT IN ({})".format(
+                ",".join("?" * len(seen))
+            ),
             [stamp, *seen],
         )
         if seen

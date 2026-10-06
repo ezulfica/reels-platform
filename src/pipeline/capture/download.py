@@ -13,11 +13,12 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
-from collections.abc import Collection
 import time
+from collections.abc import Collection
 from pathlib import Path
 
 from storage.database import mark, now
+
 from .session import build_cookies, load_dotenv
 
 MEDIA_ROOT = Path(__file__).resolve().parent.parent.parent.parent / "media"
@@ -76,6 +77,7 @@ def download_one(
                 url,
             ],
             capture_output=True,
+            check=False,
             text=True,
             timeout=timeout,
         )
@@ -132,7 +134,9 @@ def download(
     if not shutil.which("yt-dlp"):
         raise RuntimeError("yt-dlp not found in PATH")
     if shortcodes and (limit or sample):
-        raise ValueError("targeted download cannot be combined with --limit or --sample")
+        raise ValueError(
+            "targeted download cannot be combined with --limit or --sample"
+        )
 
     requested = set(shortcodes or ())
     # A completed stage is trusted only while its referenced file still exists.

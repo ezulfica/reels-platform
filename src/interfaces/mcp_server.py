@@ -17,10 +17,20 @@ from mcp.server import MCPServer
 
 from agent import (
     database_summary as _database_summary,
+)
+from agent import (
     get_entity as _get_entity,
+)
+from agent import (
     get_reel as _get_reel,
+)
+from agent import (
     search_entities as _search_entities,
+)
+from agent import (
     search_recipes as _search_recipes,
+)
+from agent import (
     search_repertoire as _search_repertoire,
 )
 from storage import database as db
@@ -38,7 +48,9 @@ mcp = MCPServer(
 
 
 def _db_path() -> Path:
-    return Path(os.environ.get("REELS_DB_PATH", str(db.DEFAULT_DB))).expanduser().resolve()
+    return (
+        Path(os.environ.get("REELS_DB_PATH", str(db.DEFAULT_DB))).expanduser().resolve()
+    )
 
 
 def _connection() -> sqlite3.Connection:
@@ -63,10 +75,18 @@ def database_summary() -> dict[str, Any]:
 
 
 @mcp.tool()
-def search_entities(query: str, type: str | None = None, city: str | None = None, limit: int = 10) -> list[dict[str, Any]]:
+def search_entities(
+    query: str, type: str | None = None, city: str | None = None, limit: int = 10
+) -> list[dict[str, Any]]:
     """Search resolved places, products, brands and services with their source reels."""
     with closing(_connection()) as conn:
-        return _search_entities(conn, query.strip(), type_=type or None, city=city or None, limit=_limit(limit))
+        return _search_entities(
+            conn,
+            query.strip(),
+            type_=type or None,
+            city=city or None,
+            limit=_limit(limit),
+        )
 
 
 @mcp.tool()
@@ -84,10 +104,14 @@ def get_reel(shortcode: str) -> dict[str, Any] | None:
 
 
 @mcp.tool()
-def search_recipes(query: str = "", cuisine: str | None = None, limit: int = 10) -> list[dict[str, Any]]:
+def search_recipes(
+    query: str = "", cuisine: str | None = None, limit: int = 10
+) -> list[dict[str, Any]]:
     """Search active cooking recipes by dish, extracted text or cuisine."""
     with closing(_connection()) as conn:
-        return _search_recipes(conn, query.strip(), cuisine=cuisine or None, limit=_limit(limit))
+        return _search_recipes(
+            conn, query.strip(), cuisine=cuisine or None, limit=_limit(limit)
+        )
 
 
 @mcp.tool()

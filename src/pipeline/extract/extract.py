@@ -29,6 +29,7 @@ from pydantic import BaseModel
 import inference as llm
 from domain import repertoire
 from storage.database import code_sha, mark, now
+
 from .contracts import (
     FACETS,
     FACETS_BY_FAMILY,
@@ -36,18 +37,25 @@ from .contracts import (
     FAMILY_OF_FACET,
     MAX_FACETS,
     PLACE_TYPES,
-    SCALES,
-    TYPES,
+    SCALES,  # noqa: F401 - compatibility re-export
+    TYPES,  # noqa: F401 - compatibility re-export
     Candidate,
     ContentIndexResult,
+    DiscoveryResult,
     EnrichedEntity,
     EnrichmentResult,
-    Evidence,
+    Evidence,  # noqa: F401 - compatibility re-export
     ExtractionResult,
     FicheResult,
     Mention,
-    RecipeCard,
-    DiscoveryResult,
+    RecipeCard,  # noqa: F401 - compatibility re-export
+)
+from .evidence import (
+    _assess_evidence,
+    _attested,
+    _is_price_or_qty,
+    _normalised_text,
+    validate_evidence,  # noqa: F401 - compatibility re-export
 )
 from .prompts import (
     CONTENT_INDEX_SYSTEM_PROMPT,
@@ -56,13 +64,6 @@ from .prompts import (
     FICHE_SYSTEM_PROMPT,
     context_fingerprint,
     prompt_fingerprint,
-)
-from .evidence import (
-    _assess_evidence,
-    _attested,
-    _is_price_or_qty,
-    _normalised_text,
-    validate_evidence,
 )
 
 # Default local extraction model; configuration may override it.
@@ -399,7 +400,7 @@ def _split_names(name: str) -> list[str]:
     return pieces or [name.strip()]
 
 
-def _useful_tags(tags: list[str], entity: "Candidate") -> list[str]:
+def _useful_tags(tags: list[str], entity: Candidate) -> list[str]:
     """Drop tags that restate an already-structured field.
 
     The prompt forbids it explicitly; the model does it anyway. Measured on v9:
@@ -477,7 +478,7 @@ def _useful_key_points(points: list[str]) -> list[str]:
 def _sync_repertoire_fts(
     conn: sqlite3.Connection,
     shortcode: str,
-    result: "ExtractionResult",
+    result: ExtractionResult,
     tags: list[str],
     key_points: list[str],
 ) -> None:
@@ -685,7 +686,7 @@ _FILE_LIKE = re.compile(
 _FILE_TREE_MIN = 4
 
 
-def _drop_file_tree(entities: list["Candidate"]) -> list["Candidate"]:
+def _drop_file_tree(entities: list[Candidate]) -> list[Candidate]:
     """Drop a directory listing that got catalogued as entities.
 
     Measured on Da2g9a0OZAT, a reel about organising a repository: 12 of its 14
@@ -845,8 +846,8 @@ def _record_attempt(
 
 
 def write_candidates(
-    conn: sqlite3.Connection, shortcode: str, result: "ExtractionResult", context: str
-) -> list["Candidate"]:
+    conn: sqlite3.Connection, shortcode: str, result: ExtractionResult, context: str
+) -> list[Candidate]:
     """Turn one model response into `candidate` rows, guards applied. Returns the
     entities kept, for the caller to report on.
 

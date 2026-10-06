@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -29,7 +29,7 @@ def initialize_web_state(conn: sqlite3.Connection) -> None:
 
 
 def now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 def code_sha() -> str | None:
@@ -51,6 +51,7 @@ def code_sha() -> str | None:
             ["git", "rev-parse", "--short", "HEAD"],
             cwd=PROJECT_ROOT,
             capture_output=True,
+            check=False,
             text=True,
             timeout=5,
         )
@@ -61,6 +62,7 @@ def code_sha() -> str | None:
             ["git", "status", "--porcelain"],
             cwd=PROJECT_ROOT,
             capture_output=True,
+            check=False,
             text=True,
             timeout=5,
         )
@@ -95,6 +97,7 @@ def initialize(conn: sqlite3.Connection) -> bool:
     conn.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
     conn.commit()
     return True
+
 
 # ------------------------------------------------------------------ stage_state
 
@@ -147,7 +150,7 @@ def pending(
 
 def counts(conn: sqlite3.Connection) -> dict[str, int]:
     """Pipeline state in a single pass, for `reels status`."""
-    one = lambda q: conn.execute(q).fetchone()[0]  # noqa: E731
+    one = lambda q: conn.execute(q).fetchone()[0]
     stats = {
         "reel": one("SELECT COUNT(*) FROM reel"),
         "unsaved": one("SELECT COUNT(*) FROM reel WHERE unsaved_at IS NOT NULL"),

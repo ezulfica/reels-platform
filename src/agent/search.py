@@ -8,7 +8,6 @@ not the unverified candidates, not the detail of how a fiche was built.
 from __future__ import annotations
 
 import json
-
 import sqlite3
 
 

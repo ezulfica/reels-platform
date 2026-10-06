@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import sqlite3
 
-
 # The types whose entities are LOOKED UP by a name someone gave them. Everywhere
 # else, a common noun IS the correct answer: a recipe is `raviolis sans pliage`,
 # a product is `standing desk`, an exercise is `reverse plank`. None of them has
@@ -73,10 +72,14 @@ def sources_of(conn: sqlite3.Connection, shortcode: str) -> str:
     parts = []
     for sql in (
         "SELECT caption FROM reel WHERE shortcode = ?",
-        "SELECT text FROM transcript WHERE shortcode = ?"
-        " ORDER BY created_at DESC LIMIT 1",
-        "SELECT text FROM screen_text WHERE shortcode = ?"
-        " ORDER BY created_at DESC LIMIT 1",
+        (
+            "SELECT text FROM transcript WHERE shortcode = ?"
+            " ORDER BY created_at DESC LIMIT 1"
+        ),
+        (
+            "SELECT text FROM screen_text WHERE shortcode = ?"
+            " ORDER BY created_at DESC LIMIT 1"
+        ),
     ):
         row = conn.execute(sql, (shortcode,)).fetchone()
         if row and row[0]:
