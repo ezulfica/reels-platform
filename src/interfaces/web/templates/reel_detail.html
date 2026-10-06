@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ reel.shortcode }} — Reels Dishform{% endblock %}
+{% block content %}
+<p><a href="/reels">← back to reels</a></p>
+<h1>
+  <a href="{{ reel.url }}" target="_blank" rel="noopener">@{{ reel.username }} · {{ reel.shortcode }} ↗</a>
+</h1>
+
+{% if video_url %}
+<section class="video-card">
+  <video controls preload="metadata"{% if poster_url %} poster="{{ poster_url }}"{% endif %}>
+    <source src="{{ video_url }}" type="video/mp4">
+    Your browser cannot play this video.
+  </video>
+  <p><span class="chip ok">local copy</span> <a href="{{ reel.url }}" target="_blank" rel="noopener">View on Instagram ↗</a></p>
+</section>
+{% else %}
+<p class="empty">Local video unavailable. <a href="{{ reel.url }}" target="_blank" rel="noopener">View on Instagram ↗</a></p>
+{% endif %}
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.5rem;">
+  <div>
+    <h3 style="font-size:1rem; margin-bottom:0.6rem;">Source</h3>
+
+    <div class="card">
+      <span class="src-label">Caption</span>
+      <p style="margin:0; font-size:0.9rem;">{{ reel.caption or '(empty)' }}</p>
+    </div>
+
+    {% if asr and asr.has_speech %}
+    <div class="card">
+      <span class="src-label">Transcript ({{ asr.lang }})</span>
+      <p style="margin:0; font-size:0.87rem;">{{ asr.text }}</p>
+    </div>
+    {% elif asr %}
+    <div class="card"><em style="color:var(--ink-muted);">Pas de voix-off.</em></div>
+    {% endif %}
+
+
+    {% if ocr and ocr.text %}
+    <div class="card">
+      <span class="src-label">Raw OCR (noisy)</span>
+      <pre class="raw">{{ ocr.text }}</pre>
+    </div>
+    {% endif %}
+  </div>
+
+  <div>
+    <h3 style="font-size:1rem; margin-bottom:0.6rem;">Interpretation</h3>
+
+    {% if classification %}
+    <div class="card">
+      <span class="src-label">Topic</span>
+      <p style="margin:0 0 0.6rem; font-size:0.87rem;">{{ classification.predicted_topic }}</p>
+      <span class="src-label">Why saved</span>
+      <p style="margin:0; font-size:0.87rem;">{{ classification.why_saved }}</p>
+    </div>
+    {% endif %}
+
+    <h4 style="font-size:0.85rem; color:var(--ink-muted); margin: 1rem 0 0.5rem;">
+      Entities ({{ candidates|length }})
+    </h4>
+    {% for c in candidates %}
+    <div class="card" style="{{ 'background:var(--warn-soft);' if c.verified == 0 else '' }}">
+      <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+        <strong style="font-size:0.87rem; {{ 'text-decoration:line-through;' if c.verified == 0 else '' }}">{{ c.name }}</strong>
+        <span class="chip muted">{{ c.type }}</span>
+        {% if c.source == 'human' %}<span class="chip ok">manual</span>{% endif %}
+        {% if c.verified == 1 %}<span class="chip ok">attested</span>
+        {% elif c.verified == 0 %}<span class="chip warn">rejected</span>
+        {% else %}<span class="chip muted">unverified</span>{% endif %}
+      </div>
+      {% if c.why_saved %}<p style="margin:0.35rem 0 0; font-size:0.8rem; color:var(--ink-muted);">{{ c.why_saved }}</p>{% endif %}
+      {% if c.verified == 0 and c.verification_note %}
+      <p style="margin:0.35rem 0 0; font-size:0.75rem; color:var(--warn);">{{ c.verification_note }}</p>
+      {% endif %}
+    </div>
+    {% else %}
+    <p style="color:var(--ink-muted); font-style:italic;">No entity.</p>
+    {% endfor %}
+
+
+  </div>
+</div>
+{% endblock %}

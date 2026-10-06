@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ entity.canonical_name }} — Entities{% endblock %}
+{% block content %}
+<p><a href="/catalog">← back to entities</a></p>
+<h1>{{ entity.canonical_name }}</h1>
+<p style="margin:.5rem 0;color:var(--muted);"><span class="chip muted">{{ entity.type }}</span>{% if entity.city %} {{ entity.city }}{% endif %}{% if entity.country %}, {{ entity.country }}{% endif %}</p>
+{% if entity.highlights %}<ul class="card">{% for highlight in entity.highlights.split(' | ') %}<li>{{ highlight }}</li>{% endfor %}</ul>{% endif %}
+{% if entity.why_saved %}<p class="card">{{ entity.why_saved }}</p>{% endif %}
+{% if entity.gmaps_url %}<p><a href="{{ entity.gmaps_url }}" target="_blank" rel="noopener">Open in Maps ↗</a></p>{% endif %}
+<section class="card personal-followup"><h2>My tracking</h2><p>Tracking is personal and every change remains in history.</p>
+  <form method="post" action="/catalog/{{ entity.id }}/feedback"><input type="hidden" name="return_to" value="/entity/{{ entity.id }}">
+    <div class="grid-form"><div><label for="status">Status</label><select id="status" name="status" required><option value="" disabled {{ 'selected' if not personal or not personal.status else '' }}>Choose a status</option>{% for s in personal_statuses %}<option value="{{ s }}" {{ 'selected' if personal and personal.status == s else '' }}>{{ s.replace('_', ' ') }}</option>{% endfor %}</select></div><div><label for="score">Rating</label><select id="score" name="score"><option value="">Keep rating</option>{% for value in range(1,6) %}<option value="{{ value }}" {{ 'selected' if personal and personal.score == value else '' }}>{{ value }}/5</option>{% endfor %}</select></div></div>
+    <div class="field"><label for="note">Personal note</label><textarea id="note" name="note" rows="2">{{ personal.note if personal and personal.note else '' }}</textarea></div><button type="submit">Save</button>
+  </form>
+  {% if personal and personal.status %}<form method="post" action="/catalog/{{ entity.id }}/feedback" style="margin-top:.6rem;"><input type="hidden" name="return_to" value="/entity/{{ entity.id }}"><input type="hidden" name="status" value="clear"><button class="secondary" type="submit">Clear current status</button></form>{% endif %}
+  {% if history %}<details><summary>History ({{ history|length }})</summary><ul>{% for item in history %}<li>{{ item.changed_at }} · {{ item.status or 'no status' }}{% if item.note %} — {{ item.note }}{% endif %}</li>{% endfor %}</ul></details>{% endif %}
+</section>
+<h2 style="margin-top:1.5rem;">Associated reels ({{ sources|length }})</h2>
+{% for reel in sources %}<a class="source-row" href="/reel/{{ reel.shortcode }}">{% if reel.poster_url %}<img src="{{ reel.poster_url }}" alt="Reel preview {{ reel.shortcode }}" loading="lazy">{% endif %}<span><strong>@{{ reel.username }}</strong>{% if reel.predicted_topic %} · {{ reel.predicted_topic }}{% endif %}<small>{{ (reel.caption or '')[:150] }}{% if reel.caption and reel.caption|length > 150 %}…{% endif %}</small></span><span class="chip ok">open</span></a>{% else %}<p class="empty">No source reel associated.</p>{% endfor %}
+{% endblock %}

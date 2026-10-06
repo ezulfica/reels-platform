@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Recipes — Reels Dishform{% endblock %}
+{% block content %}
+<h1>Recipes</h1>
+<nav class="view-switch" aria-label="View"><a class="{{ 'active' if view == 'list' else '' }}" href="?{{ request.url.query | replace('view=grid','view=list') | replace('view=list','view=list') }}{% if 'view=' not in request.url.query %}{% if request.url.query %}&{% endif %}view=list{% endif %}">List</a><a class="{{ 'active' if view == 'grid' else '' }}" href="?{{ request.url.query | replace('view=list','view=grid') | replace('view=grid','view=grid') }}{% if 'view=' not in request.url.query %}{% if request.url.query %}&{% endif %}view=grid{% endif %}">Grid</a></nav>
+<p style="font-size:0.87rem; color:var(--ink-muted); margin:0.4rem 0 1.2rem;">
+  Dishes indexed from your reels, with your personal cooking history.
+</p>
+
+<form method="get" data-live-filter class="card recipe-filters">
+  <div><label for="q">Dish</label><input id="q" name="q" value="{{ q }}" placeholder="chercher une recette"></div>
+  <div><label for="cuisine">Cuisine</label><select id="cuisine" name="cuisine"><option value="">All</option>{% for value in cuisines %}<option value="{{ value }}" {{ 'selected' if value == cuisine else '' }}>{{ value }}</option>{% endfor %}</select></div>
+  <div><label for="course">Course</label><select id="course" name="course"><option value="">All</option>{% for value in courses %}<option value="{{ value }}" {{ 'selected' if value == course else '' }}>{{ value }}</option>{% endfor %}</select></div>
+  <div><label for="status">My status</label><select id="status" name="status"><option value="">All</option><option value="untried" {{ 'selected' if status == 'untried' else '' }}>Not tried yet</option>{% for value in statuses %}<option value="{{ value }}" {{ 'selected' if value == status else '' }}>{{ value.replace('_', ' ') }}</option>{% endfor %}</select></div>
+</form>
+
+<section class="content-{{ view }}">
+{% for recipe in recipes %}
+<article class="card">
+  <div style="display:flex; justify-content:space-between; align-items:start; gap:0.8rem; flex-wrap:wrap;">
+    <div><h2 style="font-size:1.25rem;"><a href="/repertoire/{{ recipe.shortcode }}">{{ recipe.dish_name }}</a></h2>
+      <div style="color:var(--ink-muted); font-size:0.82rem; margin-top:0.3rem;">{% for value in (recipe.cuisine_family, recipe.cuisine, recipe.course) if value %}<span class="chip muted">{{ value }}</span> {% endfor %}</div>
+    </div>
+    {% if recipe.verdict %}<span class="chip ok">{{ recipe.verdict.replace('_', ' ') }}</span>{% else %}<span class="chip muted">Not tried yet</span>{% endif %}
+  </div>
+  {% if recipe.summary %}<p style="margin:0.7rem 0 0; font-size:0.88rem;">{{ recipe.summary }}</p>{% endif %}
+  <p style="font-size:0.8rem; margin:0.7rem 0 0;"><a href="/repertoire/{{ recipe.shortcode }}">Fiche et retour personnel</a> · <a href="{{ recipe.url }}" target="_blank" rel="noopener">Source Instagram ↗</a></p>
+</article>
+{% else %}
+<p>No recipes match these filters.</p>
+{% endfor %}
+</section>
+{% endblock %}

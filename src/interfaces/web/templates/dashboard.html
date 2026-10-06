@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Overview — Reels Dishform{% endblock %}
+{% block content %}
+<h1>Overview</h1>
+<p style="color:var(--ink-muted); margin:0.45rem 0 1.5rem;">Local database status and direct access to saved content.</p>
+
+<section class="metric-grid" aria-label="Pipeline coverage">
+  <div class="metric"><span>Saved items</span><strong>{{ counts.saved }}</strong></div>
+  <div class="metric"><span>Local videos</span><strong>{{ counts.downloaded }}</strong></div>
+  <div class="metric"><span>Transcripts</span><strong>{{ counts.transcribed }}</strong></div>
+  <div class="metric"><span>OCR</span><strong>{{ counts.ocr }}</strong></div>
+  <div class="metric"><span>Extractions</span><strong>{{ counts.extracted }}</strong></div>
+  <div class="metric"><span>Entities catalogue</span><strong>{{ counts.entities }}</strong></div>
+  <div class="metric"><span>Repertoire entries</span><strong>{{ counts.repertoire }}</strong></div>
+  <div class="metric"><span>Recipes</span><strong>{{ counts.recipes }}</strong></div>
+</section>
+
+<div class="dashboard-columns">
+  <section class="card"><h2>Main themes</h2><p class="empty" style="font-size:.82rem; margin:.3rem 0 .6rem;">Broad categories derived from tags, content, and entities.</p>
+    {% for item in topics %}<div class="distribution"><span>{{ item.label }}</span><strong>{{ item.count }}</strong></div>{% else %}<p class="empty">No classified extraction.</p>{% endfor %}
+  </section>
+  <section class="card"><h2>Entities by type</h2>
+    {% for item in entity_types %}<div class="distribution"><span>{{ item.label }}</span><strong>{{ item.count }}</strong></div>{% else %}<p class="empty">No catalogue entity.</p>{% endfor %}
+  </section>
+</div>
+
+<section style="margin-top:1.8rem;"><div style="display:flex; justify-content:space-between; gap:1rem; align-items:baseline; flex-wrap:wrap;"><h2>Recently saved</h2><a href="/reels">Browse all reels →</a></div>
+  <div class="dashboard-recent-grid">{% for reel in recent %}<a class="dashboard-recent-card" href="/reel/{{ reel.shortcode }}"><span><strong>@{{ reel.username }}</strong>{% if reel.predicted_topic %} · {{ reel.predicted_topic }}{% endif %}<small>Added {{ reel.first_seen_at[:10] if reel.first_seen_at else "unknown date" }} · {{ (reel.caption or '')[:110] }}{% if reel.caption and reel.caption|length > 110 %}…{% endif %}</small></span><span class="chip {{ 'ok' if reel.extracted else 'muted' }}">{{ 'extracted' if reel.extracted else 'to process' }}</span></a>{% else %}<p class="empty">The library does not contain any saved item yet.</p>{% endfor %}</div>
+</section>
+{% endblock %}

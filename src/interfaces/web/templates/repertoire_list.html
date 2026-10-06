@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Repertoire — Reels Dishform{% endblock %}
+{% block content %}
+<h1>{{ heading }}</h1>
+<nav class="view-switch" aria-label="View"><a class="{{ 'active' if view == 'list' else '' }}" href="?{{ request.url.query | replace('view=grid','view=list') | replace('view=list','view=list') }}{% if 'view=' not in request.url.query %}{% if request.url.query %}&{% endif %}view=list{% endif %}">List</a><a class="{{ 'active' if view == 'grid' else '' }}" href="?{{ request.url.query | replace('view=list','view=grid') | replace('view=grid','view=grid') }}{% if 'view=' not in request.url.query %}{% if request.url.query %}&{% endif %}view=grid{% endif %}">Grid</a></nav>
+<p class="muted" style="font-size:0.87rem; margin: 0.4rem 0 1.2rem;">
+{{ description }}
+</p>
+
+<form method="get" data-live-filter style="display:flex; gap:0.6rem; margin: 0 0 1.5rem;">
+  <input name="q" value="{{ q }}" placeholder="chercher (ex: recette pho)" style="flex:1;">
+</form>
+
+<section class="content-{{ view }}">
+{% for e in results %}
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+    <strong><a href="/repertoire/{{ e.shortcode }}">{{ e.topic or '(sans titre)' }}</a></strong>
+    <span style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+      {% for t in e.tags %}<span class="chip muted">{{ t }}</span>{% endfor %}
+    </span>
+  </div>
+  {% if e.why_saved %}<p style="margin:0.5rem 0; font-size:0.87rem; color:var(--ink-muted);">{{ e.why_saved }}</p>{% endif %}
+  {% if e.url %}
+  <div style="font-size:0.8rem; margin-top:0.5rem;">
+    <a href="/repertoire/{{ e.shortcode }}">Open details</a>
+    · <a href="{{ e.url }}" target="_blank" rel="noopener">@{{ e.username }} ↗</a>
+  </div>
+  {% endif %}
+</div>
+{% else %}
+<p>No repertoire entry{% if q %} for &laquo; {{ q }} &raquo;{% endif %}.</p>
+{% endfor %}
+</section>
+{% endblock %}

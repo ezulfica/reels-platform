@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ fiche.entry_title or fiche.topic or fiche.shortcode }} — Repertoire{% endblock %}
+{% block content %}
+<p style="margin:0 0 0.5rem;"><a href="/recipes">← Recipes</a> · <a href="/repertoire">Repertoire</a></p>
+<h1>{{ fiche.entry_title or fiche.topic or '(untitled)' }}</h1>
+{% if fiche.tags %}<p style="display:flex; gap:0.4rem; flex-wrap:wrap; margin:0.7rem 0;">{% for tag in fiche.tags %}<span class="chip muted">{{ tag }}</span>{% endfor %}</p>{% endif %}
+
+<section class="card" aria-labelledby="source-title">
+  <h2 id="source-title">Source</h2>
+  {% if poster_url %}<img src="{{ poster_url }}" alt="Reel poster" style="display:block; width:min(100%, 32rem); max-height:24rem; object-fit:contain; margin:0.8rem 0; border-radius:8px; background:#000;">{% endif %}
+  {% if has_local_media or has_proxy_media %}
+  <video controls preload="metadata" poster="{{ poster_url or '' }}" style="display:block; width:100%; max-height:70vh; border-radius:8px; background:#000;">
+    <source src="/media/{{ fiche.shortcode }}/view" type="video/mp4">Your browser cannot play this video.
+  </video>
+  <p style="font-size:0.82rem; margin:0.5rem 0;"><a href="/media/{{ fiche.shortcode }}/view">Open local video (proxy when available) ↗</a></p>
+  {% else %}<p style="margin:0.6rem 0; color:var(--ink-muted);">Local video is currently unavailable.</p>{% endif %}
+  <p style="margin:0.8rem 0 0; font-size:0.88rem;">
+    {% if fiche.url %}<a href="{{ fiche.url }}" target="_blank" rel="noopener">View Instagram source ↗</a>{% endif %}
+    · <a href="/reel/{{ fiche.shortcode }}">Extraction data</a>
+
+  </p>
+  {% if fiche.caption %}<div style="margin-top:0.8rem;"><span class="src-label">Instagram caption</span><p style="margin:0; font-size:0.87rem; white-space:pre-wrap;">{{ fiche.caption }}</p></div>{% endif %}
+</section>
+
+{% if fiche.entry_summary or fiche.why_saved %}<section class="card"><h2>Extracted context</h2><p>{{ fiche.entry_summary or fiche.why_saved }}</p></section>{% endif %}
+
+{% for recipe in recipes %}
+<article class="card" id="recipe-{{ recipe.id }}">
+  <h2>{{ recipe.dish_name }}</h2>
+  <p style="margin:0.5rem 0;">{% for value in (recipe.cuisine_family, recipe.cuisine, recipe.course) if value %}<span class="chip muted">{{ value }}</span> {% endfor %}{% for tag in recipe.dietary_tags %}<span class="chip muted">{{ tag }}</span> {% endfor %}</p>
+  <section style="border-top:1px solid var(--border); padding-top:0.7rem; margin-top:0.7rem;">
+    <h3 style="font-size:1rem;">Facts indexed from the source</h3>
+    {% if recipe.summary %}<p>{{ recipe.summary }}</p>{% endif %}
+    {% if recipe.evidence %}<ul>{% for fact in recipe.evidence %}<li>{% if fact.quote %}“{{ fact.quote }}”{% endif %}{% if fact.source %} <span class="chip muted">{{ fact.source }}</span>{% endif %}{% if fact.location %} · {{ fact.location }}{% endif %}</li>{% endfor %}</ul>{% else %}<p style="color:var(--ink-muted);">No attributed text excerpt was retained for this recipe.</p>{% endif %}
+    {% if fiche.url %}<a href="{{ fiche.url }}" target="_blank" rel="noopener">View source reel ↗</a>{% endif %}
+  </section>
+
+  <section style="border-top:1px solid var(--border); padding-top:0.7rem; margin-top:0.9rem;">
+    <h3 style="font-size:1rem;">My feedback and attempts</h3>
+    {% if recipe.attempts %}<ol>{% for attempt in recipe.attempts %}<li><strong>{{ attempt.verdict.replace('_', ' ') }}</strong>{% if attempt.rating %} · {{ attempt.rating }}/5{% endif %}{% if attempt.cooked_at %} · {{ attempt.cooked_at }}{% endif %}{% if attempt.note %}<p style="margin:0.2rem 0;">{{ attempt.note }}</p>{% endif %}{% if attempt.changes_made %}<p style="margin:0.2rem 0; color:var(--ink-muted);">Changes: {{ attempt.changes_made }}</p>{% endif %}</li>{% endfor %}</ol>{% else %}<p style="color:var(--ink-muted);">No personal feedback yet.</p>{% endif %}
+    <p style="font-size:0.78rem; color:var(--ink-muted);">Each submission adds a history event and retains prior attempts.</p>
+    <form method="post" action="/repertoire/{{ fiche.shortcode }}/recipes/{{ recipe.id }}/feedback" class="card" style="margin-bottom:0;">
+      <div class="grid-form">
+        <div><label for="verdict-{{ recipe.id }}">My verdict after this attempt</label><select id="verdict-{{ recipe.id }}" name="verdict" required>{% for verdict in ('want_to_try','liked','favorite','disappointing','avoid') %}<option value="{{ verdict }}">{{ verdict.replace('_', ' ') }}</option>{% endfor %}</select></div>
+        <div><label for="rating-{{ recipe.id }}">Rating out of 5 (optional)</label><select id="rating-{{ recipe.id }}" name="rating"><option value="">No rating</option>{% for value in range(1,6) %}<option value="{{ value }}">{{ value }}/5</option>{% endfor %}</select></div>
+      </div>
+      <div class="grid-form"><div><label for="cooked-{{ recipe.id }}">Attempt date</label><input id="cooked-{{ recipe.id }}" type="date" name="cooked_at"></div><div><label for="changes-{{ recipe.id }}">Changes</label><input id="changes-{{ recipe.id }}" name="changes_made" placeholder="e.g. less salt"></div></div>
+      <div class="field"><label for="note-{{ recipe.id }}">Personal notes</label><textarea id="note-{{ recipe.id }}" name="note" rows="2"></textarea></div>
+      <button type="submit">Add this feedback</button>
+    </form>
+  </section>
+</article>
+{% else %}
+<p class="card">No active recipe is indexed for this reel.</p>
+{% endfor %}
+
+{% if fiche.key_points %}<section class="card"><h2>Other extracted points</h2><ul>{% for point in fiche.key_points %}<li>{{ point }}</li>{% endfor %}</ul></section>{% endif %}
+{% endblock %}

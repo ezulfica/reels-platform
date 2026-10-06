@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Reels — Reels Dishform{% endblock %}
+{% block content %}
+<h1>Extracted reels</h1>
+<nav class="view-switch" aria-label="View"><a class="{{ 'active' if view == 'list' else '' }}" href="?{{ request.url.query | replace('view=grid','view=list') | replace('view=list','view=list') }}{% if 'view=' not in request.url.query %}{% if request.url.query %}&{% endif %}view=list{% endif %}">List</a><a class="{{ 'active' if view == 'grid' else '' }}" href="?{{ request.url.query | replace('view=list','view=grid') | replace('view=grid','view=grid') }}{% if 'view=' not in request.url.query %}{% if request.url.query %}&{% endif %}view=grid{% endif %}">Grid</a></nav>
+<p style="color:var(--ink-muted); margin: 0.5rem 0 1.5rem;">
+  {{ total }} reels. <a href="/reels?flag=a_revoir&sort={{ sort }}">Show only items to review</a>
+  {% if flag %} · <a href="/reels?sort={{ sort }}">Show all</a>{% endif %}
+</p>
+<form method="get" data-live-filter style="margin:-.8rem 0 1.4rem;"><input type="hidden" name="flag" value="{{ flag or '' }}"><label for="sort">Sort by added date</label><select id="sort" name="sort" style="width:auto"><option value="added_desc" {{ 'selected' if sort == 'added_desc' }}>newest first</option><option value="added_asc" {{ 'selected' if sort == 'added_asc' }}>oldest first</option></select></form>
+
+<section class="content-{{ view }}">
+{% for r in reels %}
+<a href="/reel/{{ r.shortcode }}" style="text-decoration:none; color:inherit;">
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+    <strong>@{{ r.username }}</strong><span class="chip muted">added {{ r.first_seen_at[:10] if r.first_seen_at else "unknown date" }}</span>
+    <span style="display:flex; gap:0.4rem;">
+      {% if r.is_actionable %}
+        <span class="chip ok">actionable</span>
+      {% else %}
+        <span class="chip muted">non-actionable</span>
+      {% endif %}
+      <span class="chip muted">{{ r.n_entities }} entit{{ 'ies' if r.n_entities != 1 else 'y' }}</span>
+    </span>
+  </div>
+  <p style="margin: 0.5rem 0 0; font-size:0.88rem; color:var(--ink-muted);">
+    {{ r.predicted_topic or '' }} — {{ (r.caption or '')[:120] }}{% if r.caption and r.caption|length > 120 %}…{% endif %}
+  </p>
+</div>
+</a>
+{% else %}
+<p>No reels found.</p>
+{% endfor %}
+
+{% if total > per_page %}
+<div style="display:flex; gap:1rem; margin-top:1.5rem;">
+  {% if page > 1 %}<a href="/reels?page={{ page - 1 }}{{ '&flag=' + flag if flag else '' }}&sort={{ sort }}">← previous</a>{% endif %}
+  <span style="color:var(--ink-muted);">page {{ page }}</span>
+  {% if page * per_page < total %}<a href="/reels?page={{ page + 1 }}{{ '&flag=' + flag if flag else '' }}&sort={{ sort }}">next →</a>{% endif %}
+</div>
+{% endif %}
+</section>
+{% endblock %}

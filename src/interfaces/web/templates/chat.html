@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Assistant — Reels Dishform{% endblock %}
+{% block content %}
+<section class="chat-layout">
+  <aside class="chat-sidebar"><a class="new-chat" href="/chat">+ New conversation</a><h2>Conversations</h2>
+  {% for item in sessions %}<a class="chat-session {{ 'active' if active and active.id == item.id else '' }}" href="/chat?session_id={{ item.id }}">{{ item.title }}</a>{% else %}<p class="empty">No conversation yet.</p>{% endfor %}</aside>
+  <section class="chat-thread"><header class="chat-thread-header"><span class="chip ok">local database</span><h1>{{ active.title if active else 'New conversation' }}</h1><p class="chat-explainer">This search interface queries the local database, sends the results to the configured model, and displays its response. It does not run an autonomous agent or pipeline processing.</p></header>
+  {% if error %}<p class="chat-error">{{ error }}</p>{% endif %}
+  <div class="chat-messages">{% for item in active.messages if active %}<article class="chat-message {{ item.role }}"><span>{{ 'You' if item.role == 'user' else 'Assistant' }}</span><div>{{ item.content | e | replace('\n', '<br>') | safe }}</div></article>{% else %}<p class="empty">Ask about your saved entities, recipes, or reels.</p>{% endfor %}</div>
+  <form method="post" action="/chat" class="chat-composer"><input type="hidden" name="session_id" value="{{ active.id if active else '' }}"><textarea name="message" rows="3" maxlength="800" placeholder="E.g. Which Japanese restaurants have I saved in Paris?" required></textarea><button type="submit">Send</button></form>
+  {% if active %}<form method="post" action="/chat/{{ active.id }}/delete" class="chat-delete"><button class="secondary">Delete this conversation</button></form>{% endif %}
+  </section>
+</section>
+{% endblock %}

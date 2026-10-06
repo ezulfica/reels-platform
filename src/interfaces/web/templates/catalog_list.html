@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Entities — Reels Dishform{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">Personal library</p><h1>Entities</h1></div><p>Explore places, brands, and products through their source reels.</p></div>
+
+<form method="get" data-live-filter style="display:flex; gap:0.6rem; flex-wrap:wrap; margin: 1.2rem 0 1.5rem;">
+  <input name="q" value="{{ q }}" placeholder="search (e.g. Japanese restaurant Paris)" style="flex:1;">
+  <select name="type_" style="width:auto;"><option value="">all types</option>{% for t in types %}<option value="{{ t }}" {{ 'selected' if t == type_ else '' }}>{{ t }}</option>{% endfor %}</select>
+  <select name="status" style="width:auto;"><option value="">All personal statuses</option>{% for s in personal_statuses %}<option value="{{ s }}" {{ 'selected' if s == status else '' }}>{{ s.replace('_', ' ') }}</option>{% endfor %}</select>
+</form>
+
+<section class="entity-grid {{ view }}">
+{% for e in results %}
+<a class="entity-card" href="/entity/{{ e.id }}">
+  <div class="entity-card-body">
+    <header class="entity-card-header">
+      <div><strong>{{ e.name }}</strong><div class="entity-tags"><span class="chip muted">{{ e.type }}</span>{% for f in e.facets[:1] %}<span class="chip muted">{{ f }}</span>{% endfor %}{% if e.facets|length > 1 %}<span class="chip muted">+{{ e.facets|length - 1 }}</span>{% endif %}{% if e.city %}<span class="chip muted">{{ e.city }}</span>{% endif %}</div></div>
+      {% if e.preview %}<img class="entity-thumb" src="{{ e.preview.url }}" alt="Reel preview {{ e.preview.shortcode }}" loading="lazy">{% endif %}
+    </header>
+    {% if e.why_saved %}<p class="entity-summary">{{ e.why_saved }}</p>{% elif e.highlights %}<p class="entity-summary">{{ e.highlights.split(' | ')[0] }}</p>{% endif %}
+    <footer class="entity-card-footer"><span>{% if e.reels %}{{ e.reels|length }} reel{{ 's' if e.reels|length > 1 else '' }} source · @{{ e.reels[0].username }}{% endif %}</span><span class="chip {{ 'ok' if e.status else '' }}">{{ e.status.replace('_', ' ') if e.status else 'to review' }}</span></footer>
+  </div>
+</a>
+{% else %}<p>No entity{% if q %} for &laquo; {{ q }} &raquo;{% endif %}.</p>{% endfor %}
+</section>
+{% endblock %}
