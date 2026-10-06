@@ -104,26 +104,7 @@ The local-first deployment remains the reference. The cloud target keeps the
 catalogue and personal data private while running scheduled work only when it is
 needed.
 
-<details>
-<summary>Target architecture</summary>
-
-```mermaid
-flowchart TB
-  timer[Weekly scheduler] --> job[CPU Kubernetes Job]
-  job --> pg[(PostgreSQL)]
-  job --> objects[(Private object storage)]
-  job --> llm[Codex or LLM API]
-  job --> decision{GPU needed?}
-  decision -->|No| cpu[CPU ASR and OCR]
-  decision -->|Yes| gpu[Ephemeral GPU worker]
-  gpu --> objects
-  web[Private FastAPI web] --> pg
-  web --> objects
-  discord[Discord agent] --> mcp[Authenticated read-only MCP]
-  mcp --> pg
-```
-
-</details>
+<img src="docs/assets/cloud-architecture.svg" alt="Target cloud deployment: private web and Discord MCP use PostgreSQL and private object storage; a weekly Kubernetes Job uses CPU by default and an ephemeral GPU only when needed." width="100%">
 
 PostgreSQL stores reels, entities, recipes, feedback, chat and pipeline state.
 Private object storage holds original and derived media. The web starts private

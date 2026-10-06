@@ -9,28 +9,8 @@ Faire tourner la plateforme de façon autonome à coût maîtrisé, tout en gard
 les médias et le catalogue privés. PostgreSQL devient la source de vérité
 métier ; le stockage objet contient uniquement les fichiers binaires.
 
-```mermaid
-flowchart TB
-  timer[Planificateur hebdomadaire] --> job[Job Kubernetes CPU]
 
-  job --> pg[(PostgreSQL)]
-  job --> objects[(Stockage objet privé)]
-  job --> llm[Codex ou API LLM]
-
-  job --> decision{GPU requis ?}
-  decision -->|Non| cpu[ASR et OCR CPU]
-  decision -->|Oui| runpod[API Runpod]
-  runpod --> gpu[Worker GPU éphémère]
-  gpu --> signed[URLs signées à durée courte]
-  signed --> objects
-  gpu --> result[Résultats ASR ou OCR]
-  result --> job
-
-  web[Web FastAPI privé] --> pg
-  web --> objects
-  discord[Agent Discord] --> mcp[MCP authentifié lecture seule]
-  mcp --> pg
-```
+![Schéma de déploiement cloud cible](../assets/cloud-architecture.svg)
 
 ## Données
 
