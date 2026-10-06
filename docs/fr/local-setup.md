@@ -16,19 +16,18 @@ make dev
 
 Ouvrir <http://127.0.0.1:8420>. Cette étape ne nécessite ni cookie Instagram ni
 connexion LLM lorsqu’une base locale existe déjà. `make dev` synchronise les
-dépendances de développement et les interfaces facultatives, puis lance le web
-avec rechargement automatique ; il ne déclenche pas la pipeline. `PORT` et `DB` restent configurables :
-`make dev PORT=8421 DB=/chemin/vers/reels.db`.
+dépendances de développement et les interfaces facultatives, crée `.env` depuis
+le modèle seulement s’il est absent, puis lance le web avec rechargement
+automatique ; il ne déclenche pas la pipeline. `PORT` et `DB` restent
+configurables : `make dev PORT=8421 DB=/chemin/vers/reels.db`. Utiliser
+`make init` une fois pour activer aussi les hooks Git et `make doctor` pour
+inspecter les prérequis facultatifs.
 
 ## 2. Configurer les secrets et l’inférence
 
-Créer le fichier local non suivi seulement si cette machine capture des médias
-Instagram sauvegardés :
-
-```bash
-cp .env.example .env
-chmod 600 .env
-```
+`make dev` et `make init` créent le fichier local non suivi depuis le modèle,
+avec les permissions utilisateur, seulement s’il n’existe pas. Ajouter une
+valeur uniquement si cette machine capture des médias Instagram sauvegardés.
 
 `.env.example` ne contient volontairement que `IG_SESSIONID`. La configuration
 par défaut utilise la CLI Codex authentifiée, Luna low et l’ASR CUDA : parcourir

@@ -48,17 +48,18 @@ make dev
 
 Open [http://127.0.0.1:8420](http://127.0.0.1:8420). The installed local service
 uses the same fixed address and port. `make dev` installs the locked development
-and optional interface dependencies, then runs the web app with automatic
-reload. It never starts the pipeline. Use `make dev PORT=8421` or `make dev
-DB=/path/to/library.db` to override the local port or database.
+and optional interface dependencies, creates a permission-restricted `.env` only
+when it is absent, then runs the web app with automatic reload. It never starts
+the pipeline. Use `make dev PORT=8421` or `make dev DB=/path/to/library.db` to
+override the local port or database. Run `make init` once to also enable the Git
+hooks, or `make doctor` to inspect the optional local capture and inference tools.
 
 For capture or LLM-backed extraction, copy the documented local configuration
 template first. It is ignored by Git and contains no credentials.
 
-```bash
-cp .env.example .env
-chmod 600 .env
-```
+`make dev` and `make init` create `.env` from this template without overwriting
+an existing file. Add credentials only when capture or a non-default inference
+backend requires them.
 
 ```bash
 # Inspect the local corpus and pipeline state

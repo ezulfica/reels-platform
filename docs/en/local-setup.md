@@ -15,19 +15,17 @@ make dev
 
 Open <http://127.0.0.1:8420>. This requires neither an Instagram cookie nor an
 LLM connection when a local database already exists. `make dev` synchronizes
-development and optional interface dependencies, then starts the web app with
-automatic reload; it never starts pipeline work. `PORT` and `DB` remain configurable, for example:
-`make dev PORT=8421 DB=/path/to/reels.db`.
+development and optional interface dependencies, creates `.env` from the
+template only when absent, then starts the web app with automatic reload; it
+never starts pipeline work. `PORT` and `DB` remain configurable, for example:
+`make dev PORT=8421 DB=/path/to/reels.db`. Run `make init` once to also enable
+Git hooks and `make doctor` to inspect optional prerequisites.
 
 ## 2. Configure secrets and inference
 
-Create the untracked configuration file only when this machine captures saved
-Instagram media:
-
-```bash
-cp .env.example .env
-chmod 600 .env
-```
+`make dev` and `make init` create the untracked local configuration file from
+the template, with user-only permissions, only when it is absent. Add a value
+only when this machine captures saved Instagram media.
 
 `.env.example` deliberately contains only `IG_SESSIONID`. The default setup uses
 the authenticated Codex CLI, Luna low, and CUDA ASR, so browsing and the default
