@@ -1,0 +1,13 @@
+db/*.db
+db/*.db-wal
+db/*.db-shm
+media/
+.venv/
+__pycache__/
+*.pyc
+.env
+var/logs/
+db/*.db.*
+
+# Local web scheduling and inference profile; never version secrets.
+config/runtime.json
