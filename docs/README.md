@@ -13,3 +13,4 @@
 | MCP local | [FR](fr/mcp.md) | [EN](en/mcp.md) |
 | Installation et exploitation locale | [FR](fr/local-setup.md) | [EN](en/local-setup.md) |
 | Politique de release | [FR](fr/politique-de-release.md) | [EN](en/release-policy.md) |
+| Déploiement cloud cible | [FR](fr/cloud-deployment.md) | [EN](en/cloud-deployment.md) |
