@@ -684,8 +684,8 @@ def recipe_feedback_submit(
 @app.get("/media/{shortcode}")
 def local_media(shortcode: str):
     """Serve only a downloaded reel known to the database, never an arbitrary path."""
-    fiche = reel_library.get(_conn(), shortcode)
-    path = reel_library.local_media_path(fiche, MEDIA_ROOT) if fiche else None
+    row = _media_paths(shortcode)
+    path = _managed_path(row["mp4_path"]) if row else None
     if path is None:
         raise HTTPException(status_code=404, detail="local video unavailable")
     return FileResponse(path, media_type="video/mp4", filename=path.name)
@@ -702,11 +702,19 @@ def _managed_path(raw_path: str | None) -> Path | None:
     return path if path.is_file() else None
 
 
+def _media_paths(shortcode: str):
+    """Return local asset paths even when extraction has not run for the reel."""
+    return _conn().execute(
+        "SELECT mp4_path, proxy_path, poster_path FROM media WHERE shortcode=?",
+        (shortcode,),
+    ).fetchone()
+
+
 @app.get("/media/{shortcode}/view")
 def view_media(shortcode: str):
-    fiche = reel_library.get(_conn(), shortcode)
-    path = _managed_path(fiche.get("proxy_path")) if fiche else None
-    path = path or (reel_library.local_media_path(fiche, MEDIA_ROOT) if fiche else None)
+    row = _media_paths(shortcode)
+    path = _managed_path(row["proxy_path"]) if row else None
+    path = path or (_managed_path(row["mp4_path"]) if row else None)
     if path is None:
         raise HTTPException(status_code=404, detail="local video unavailable")
     return FileResponse(path, media_type="video/mp4", filename=path.name)
@@ -714,8 +722,8 @@ def view_media(shortcode: str):
 
 @app.get("/media/{shortcode}/poster")
 def view_poster(shortcode: str):
-    fiche = reel_library.get(_conn(), shortcode)
-    path = _managed_path(fiche.get("poster_path")) if fiche else None
+    row = _media_paths(shortcode)
+    path = _managed_path(row["poster_path"]) if row else None
     if path is None:
         raise HTTPException(status_code=404, detail="local poster unavailable")
     media_type = {".png": "image/png", ".webp": "image/webp"}.get(

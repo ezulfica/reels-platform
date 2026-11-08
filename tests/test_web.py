@@ -370,3 +370,33 @@ def test_media_links_are_optional_and_paths_outside_media_root_are_not_served(
     assert detail.status_code == 200
     assert "Local video is currently unavailable" in detail.text
     assert client.get("/media/SAFE/view").status_code == 404
+
+
+def test_downloaded_reel_media_is_served_before_extraction(web_client):
+    conn, client, tmp_path = web_client
+    shortcode = "RAWVIDEO"
+    upsert_reels(
+        conn,
+        [
+            {
+                "pk": 124,
+                "code": shortcode,
+                "taken_at": 1721000001,
+                "media_type": 2,
+                "product_type": "clips",
+                "caption": {"text": "A downloaded reel awaiting extraction."},
+                "user": {"username": "creator"},
+            }
+        ],
+    )
+    media_root = tmp_path / "media"
+    media_root.mkdir()
+    mp4 = media_root / "RAWVIDEO.mp4"
+    mp4.write_bytes(b"video")
+    conn.execute("INSERT INTO media(shortcode,mp4_path) VALUES (?,?)", (shortcode, str(mp4)))
+    conn.commit()
+
+    served = client.get(f"/media/{shortcode}/view")
+
+    assert served.status_code == 200
+    assert served.content == b"video"
